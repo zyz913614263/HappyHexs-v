@@ -273,7 +273,7 @@ export function drawStartScreen(ctx,canvas) {
 
 	// 添加底部提示文字
     ctx.save();
-    const bottomY = canvas.height / wx.globalData.currentPixelRatio - 20 * settings.scale; // 距离底部20像素
+    const bottomY = canvas.height / wx.globalData.currentPixelRatio - 50 * settings.scale; // 距离底部20像素
     ctx.font = `${12 * settings.scale}px Arial`;
     ctx.fillStyle = '#FFFFFF'; // 使用灰色让文字不那么显眼
     ctx.textAlign = 'center';
