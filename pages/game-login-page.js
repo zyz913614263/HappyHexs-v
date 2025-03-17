@@ -180,7 +180,7 @@ export function drawStartScreen(ctx,canvas) {
 
     // 调用绘制标题函数
     drawGameTitle();
-
+/*
 	// 绘制保存到我的小程序按钮 侧边栏
     ctx.save();
     const saveY = centerY + 380 * settings.scale;
@@ -269,7 +269,7 @@ export function drawStartScreen(ctx,canvas) {
     ctx.textAlign = 'center';
     ctx.fillText('分享到', shareX, shareY - 5 * settings.scale);
 	ctx.fillText('抖音', shareX, shareY + 25 * settings.scale);
-    ctx.restore();
+    ctx.restore();*/
 
 	// 添加底部提示文字
     ctx.save();

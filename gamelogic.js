@@ -139,7 +139,7 @@ function gameinit() {
 	wx.globalData.highScore = highScore;
     console.log('历史最高分:', highScore);
 	//initUserInfo()
-	initFeedCard();
+	//initFeedCard();
 	audioManager.initAudioWithDelay();
 	// 设置全局对象
 	if (!wx.globalData.requestAnimationFrame) {
@@ -171,7 +171,6 @@ function gameinit() {
 	setStartScreen();
 	requestAnimationFrame(animLoop);
 
-	audioManager.playBGM(); // 播放背景音乐
 }
 
 function animLoop() {
@@ -290,7 +289,7 @@ function setStartScreen() {
                 wx.globalData.startScreenInterval = null;
             }
         }
-		// 绘制开始按钮（六边形版本）
+		/*
 		const centerX = canvasWidth / 2;
 		const centerY = canvasHeight / 2;
 		const saveY = centerY + 380 * settings.scale;
@@ -312,8 +311,8 @@ function setStartScreen() {
                 }
             });
             return;
-        }
-		// 检查是否点击添加到桌面按钮
+        }*/
+		/*// 检查是否点击添加到桌面按钮
         const addToDesktopX = centerX ;
         const addToDesktopY = centerY + 380 * settings.scale;
         if (x >= addToDesktopX - btnWidth/2 &&
@@ -323,7 +322,7 @@ function setStartScreen() {
             
 			isAddToDesktopButtonTouched = true;
             return;
-        }
+        }*/
     }
 
 	function handleTouchEnd(e) {
@@ -371,7 +370,7 @@ function setStartScreen() {
 		}
     }
     
-    wx.onTouchEnd(handleTouchEnd);
+    //wx.onTouchEnd(handleTouchEnd);
     // 注册触摸事件
     wx.onTouchStart(handleMainPage);
     
@@ -717,6 +716,5 @@ function floodFill(hex, side, index, deleting) {
         }
     }
 }
-
 
 export {gameinit}
