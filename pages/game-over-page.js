@@ -7,13 +7,13 @@ function drawGameOver(ctx,canvas) {
     const screenHeight = canvas.height / wx.globalData.currentPixelRatio;
     const centerX = screenWidth / 2;
     const centerY = screenHeight / 2;
-
+	// 绘制"游戏结束"文本
+    ctx.save();
     // 添加半透明背景
     ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
     ctx.fillRect(0, 0, screenWidth, screenHeight);
 
-    // 绘制"游戏结束"文本
-    ctx.save();
+    
     // 添加文字发光效果
     ctx.shadowColor = '#800080';  // 紫色阴影
     ctx.shadowBlur = 20;
@@ -79,7 +79,7 @@ function drawGameOver(ctx,canvas) {
     //ctx.strokeStyle = '#E6E6FA';  // 淡紫色
     //ctx.lineWidth = 2 * settings.scale;
     //ctx.stroke();
-	ctx.restore();
+	
     // 绘制按钮文字
     ctx.font = `bold ${20 * settings.scale}px Arial`;
     ctx.fillStyle = '#FFFFFF';
@@ -88,11 +88,10 @@ function drawGameOver(ctx,canvas) {
 	ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('点击屏幕重新开始', centerX, btnY);
-    
+    ctx.restore();
 
     // 添加装饰性元素
     ctx.save();
-	ctx.restore();
     // 绘制左右装饰线
     const lineLength = 80 * settings.scale;
     const lineSpacing = 140 * settings.scale;
