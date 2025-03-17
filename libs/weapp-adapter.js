@@ -1,4 +1,14 @@
 const tt = wx
+
+// 检查 getSystemNanoTime 方法是否存在
+if (typeof wx.getSystemNanoTime !== 'function') {
+    console.error('getSystemNanoTime is not a function');
+    wx.getSystemNanoTime = function() {
+        // 提供一个默认实现，避免错误
+        return Date.now() * 1000000;
+    };
+}
+
 // 创建 Canvas
 const canvas = wx.createCanvas()
 
@@ -122,4 +132,4 @@ export default class WeappAdapter {
       })
     })
   }
-} 
+}

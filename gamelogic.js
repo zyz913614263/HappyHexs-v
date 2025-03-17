@@ -103,7 +103,7 @@ if (!wx.globalData.btnAnimation) {
 
 // 在全局作用域创建并加载logo
 wx.globalData.gameLogo = wx.createImage();
-wx.globalData.gameLogo.src = './images/logo.png';
+wx.globalData.gameLogo.src = 'res/images/logo.png';
 
 function scaleCanvas() {
 	// 获取系统信息

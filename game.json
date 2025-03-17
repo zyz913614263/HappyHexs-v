@@ -14,6 +14,7 @@
     }
   },
   "res": {
-    "music": "res/music/"
+    "music": "res/music/",
+    "image": "res/images"
   }
 }
