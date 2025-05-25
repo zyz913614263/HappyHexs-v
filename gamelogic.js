@@ -8,8 +8,9 @@ import { audioManager } from './entry/music.js';
 import { getHighScore, saveHighScore } from './storage/localstorage.js';
 import {drawRoundRect,renderText,Text} from './comon.js';
 import { drawGameOver } from './pages/game-over-page.js';
-import { drawStartScreen } from './pages/game-login-page.js';
+import { drawStartScreen,touchPop } from './pages/game-login-page.js';
 import { render } from './pages/game-run-page.js';
+import { animate } from './pages/bubales.js';
 const tt = wx
 console.log('game.js 导入的 settings:', settings,settings.blockHeight);
 //初始化
@@ -64,6 +65,7 @@ wx.globalData.gameState = 0;//0: 未开始, 1: 游戏中, 2: 游戏结束
 const canvas = wx.globalData.canvas || wx.createCanvas()
 const ctx = canvas.getContext('2d')
 wx.globalData.ctx = ctx;
+//wx.globalData.canvas = canvas
 // 获取系统信息
 const systemInfo = wx.getSystemInfoSync()
 const screenWidth = systemInfo.windowWidth
@@ -169,14 +171,12 @@ function gameinit() {
 	//hideText();
 	// 显示开始界面
 	setStartScreen();
-	requestAnimationFrame(animLoop);
-
 }
 
-function animLoop() {
+export function animLoop() {
 	switch (wx.globalData.gameState) {
 	case 1:
-		requestAnimationFrame(animLoop);
+		//requestAnimationFrame(animLoop);
 		render(ctx,canvas);
 		var now = Date.now();
 		var dt = (now - wx.globalData.lastTime)/16.666 * wx.globalData.rush;
@@ -192,7 +192,7 @@ function animLoop() {
 		break;
 
 	case 0:
-		requestAnimationFrame(animLoop);
+		//requestAnimationFrame(animLoop);
 		
 		//render();
 		drawStartScreen(ctx,canvas);
@@ -200,20 +200,32 @@ function animLoop() {
 		break;
 
 	case -1:
-		requestAnimationFrame(animLoop);
+		//requestAnimationFrame(animLoop);
 		render(ctx,canvas);
 		break;
 
 	case 2:
-		requestAnimationFrame(animLoop);
+		//requestAnimationFrame(animLoop);
 		render(ctx,canvas);
 		drawGameOver(ctx,canvas);
 		break;
-	
+	case 3: //泡泡
+		//requestAnimationFrame(animLoop);
+		animate();
+		//console.log("game over");
+		//render(ctx,canvas);
+		break;
+	case 999: //返回主界面
+		//requestAnimationFrame(animLoop);
+		wx.globalData.gameState = 0;
+		audioManager.stopBGM();
+		gameinit();
+		break;
 	default:
 		console.log("default");
 		break;
 	}
+	requestAnimationFrame(animLoop);
 }
 
 
@@ -234,14 +246,28 @@ function handleGameStart(e) {
 			}
 			const canvasWidth = canvas.width / wx.globalData.currentPixelRatio;
 			const canvasHeight = canvas.height / wx.globalData.currentPixelRatio;
-			
+			// 获取返回按钮的位置信息
+			const returnButton = wx.globalData.returnButton;
+			const clickX = touch.clientX;
+			const clickY = touch.clientY;
+			// 检查触摸点是否在返回按钮范围内
+			if (
+				clickX >= returnButton.x &&
+				clickX <= returnButton.x + returnButton.width &&
+				clickY >= returnButton.y &&
+				clickY <= returnButton.y + returnButton.height
+			) {
+				wx.offTouchStart(handleGameStart);
+				wx.globalData.gameState = 999;
+				
+			}
 			
 			//wx.globalData.mainHex.texts.push(new Text(canvasWidth/2,canvasHeight/2, "连击 X" + wx.globalData.mainHex.position, "#FF0000"));
 
 			break
 		case 2:
 			wx.offTouchStart(handleGameStart);
-			gameinit();
+			wx.globalData.gameState = 999
 			break;
 	}
 }
@@ -266,7 +292,7 @@ function setStartScreen() {
         //console.log('按钮区域:', btnX, btnY, btnWidth, btnHeight); // 调试信息
         
         // 检查是否点击了按钮
-        if (x >= btnX && x <= btnX + btnWidth &&
+        if (wx.globalData.gameState == 0 && x >= btnX && x <= btnX + btnWidth &&
             y >= btnY && y <= btnY + btnHeight) {
 			wx.offTouchStart(handleMainPage);
 				// 开始游戏
@@ -373,6 +399,7 @@ function setStartScreen() {
     //wx.onTouchEnd(handleTouchEnd);
     // 注册触摸事件
     wx.onTouchStart(handleMainPage);
+	wx.onTouchStart(touchPop)
     
     // 绘制开始界面
     //drawStartScreen();

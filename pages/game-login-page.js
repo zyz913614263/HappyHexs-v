@@ -1,7 +1,44 @@
 import { drawRoundRect } from '../comon.js';	
 import { settings } from '../settings.js';
+import { audioManager } from '../entry/music.js';
+import {Init as InitPopo } from './bubales.js'
 const tt = wx
-export function drawStartScreen(ctx,canvas) {
+let bubbleX, bubbleY,btnWidth,btnHeight;
+let canvas, ctx;
+
+export function touchPop(e) {
+	if (wx.globalData.gameState !== 0) return;
+	//const bubbleX = centerX; // 按钮居中
+	//const bubbleY = canvas.height / wx.globalData.currentPixelRatio - 250 * settings.scale; // 距离底部20像素
+	const touch = e.touches[0]; // 获取第一个触摸点
+	const clickX = touch.clientX //* wx.globalData.currentPixelRatio;
+	const clickY = touch.clientY //* wx.globalData.currentPixelRatio;
+	console.log('触摸坐标:', clickX, clickY,bubbleX,bubbleY); // 调试信息
+	// 检查触摸点是否在按钮范围内
+	if (
+		clickX >= bubbleX - btnWidth / 2 &&
+		clickX <= bubbleX + btnWidth / 2 &&
+		clickY >= bubbleY - btnHeight / 2 &&
+		clickY <= bubbleY + btnHeight / 2
+	) {
+		/*console.log('泡泡按钮被点击了！');
+		// 在这里添加按钮点击后的逻辑
+		wx.showToast({
+			title: '泡泡按钮被点击！',
+			icon: 'none',
+			duration: 2000
+		});*/
+		//animate();
+		InitPopo(canvas,ctx)
+		wx.globalData.gameState = 3
+		wx.offTouchStart(touchPop);
+		audioManager.stopBGM();
+	}
+}
+
+export function drawStartScreen(c,ca) {
+	canvas = ca;
+	ctx = c;
 	// 使用实际的画布尺寸
 	const canvasWidth = canvas.width / wx.globalData.currentPixelRatio;
 	const canvasHeight = canvas.height / wx.globalData.currentPixelRatio;
@@ -270,7 +307,39 @@ export function drawStartScreen(ctx,canvas) {
     ctx.fillText('分享到', shareX, shareY - 5 * settings.scale);
 	ctx.fillText('抖音', shareX, shareY + 25 * settings.scale);
     ctx.restore();*/
+	bubbleY = canvas.height / wx.globalData.currentPixelRatio - 250 * settings.scale; // 距离底部20像素
+	// 绘制按钮文字
+	ctx.save();
+	
+	bubbleX = centerX; // 按钮居中
+	btnWidth = 100 * settings.scale;
+	btnHeight = 50 * settings.scale;
 
+	// 绘制按钮背景
+	drawRoundRect(ctx, bubbleX - btnWidth / 2, bubbleY - btnHeight / 2, btnWidth, btnHeight, 10 * settings.scale);
+
+	// 创建按钮渐变
+	const bubbleGradient = ctx.createLinearGradient(
+		bubbleX - btnWidth / 2,
+		bubbleY - btnHeight / 2,
+		bubbleX + btnWidth / 2,
+		bubbleY + btnHeight / 2
+	);
+	bubbleGradient.addColorStop(0, '#FF6B6B'); // 红色
+	bubbleGradient.addColorStop(1, '#ee5253'); // 深红色
+
+	ctx.fillStyle = bubbleGradient;
+	ctx.fill();
+	ctx.font = `bold ${20 * settings.scale}px Arial`;
+	ctx.fillStyle = '#FFFFFF';
+	ctx.shadowColor = '#000000';
+	ctx.shadowBlur = 10;
+	ctx.textAlign = 'center';
+	ctx.fillText('泡泡', centerX, bubbleY + 7 * settings.scale);
+	ctx.restore();
+	
+	// 使用 wx.onTouchStart 添加触摸事件监听
+	
 	// 添加底部提示文字
     ctx.save();
     const bottomY = canvas.height / wx.globalData.currentPixelRatio - 50 * settings.scale; // 距离底部20像素

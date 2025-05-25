@@ -72,6 +72,26 @@ export function render(ctx,canvas) {
 		ctx.globalAlpha = 1;
 	}
 	
+	// 绘制返回按钮
+	const btnWidth = 100 * settings.scale;
+	const btnHeight = 50 * settings.scale;
+	const btnX = 20; // 按钮左上角 X 坐标
+	const btnY = 20; // 按钮左上角 Y 坐标
+
+	ctx.save();
+	ctx.fillStyle = 'rgba(255, 255, 255, 0)'; // 按钮背景颜色
+	ctx.fillRect(btnX, btnY, btnWidth, btnHeight);
+
+	ctx.font = `bold ${30 * settings.scale}px Arial`;
+	ctx.fillStyle = '#bdc3c7'; // 按钮文字颜色
+	ctx.textAlign = 'center';
+	ctx.textBaseline = 'middle';
+	ctx.fillText('返回', btnX + btnWidth / 2, btnY + btnHeight / 2);
+	ctx.restore();
+
+	// 将按钮位置存储到全局变量，供触摸事件使用
+	wx.globalData.returnButton = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
+	
 	
 }
 
