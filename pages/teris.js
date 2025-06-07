@@ -4,208 +4,211 @@ import { Matrix } from './teris/matrix'
 import { audioManager } from '../entry/music'
 
 let canvas, context;
-let game;
+let game = Game;
 
 let BlockSize = 17;
 
 export class Game {
-  constructor(canvas, ctx) {
-    this.canvas = canvas
-    this.ctx = ctx
-    this.block = null
-    this.nextBlock = null
-    this.matrix = new Matrix(BlockSize)
-    this.score = 0
-	this.maxScore = 0
-    this.level = 1
-    this.speed = 60
-    this.gameOver = false
-    this.isPaused = false
-    
-    this.init()
-  }
-
-  init() {
-	this.nextBlock = new Block()
-    // 创建新方块
-    this.createNewBlock()
-
-    // 加载游戏状态
-    this.loadGameState()
-  }
-
-  createNewBlock() {
-    this.block = this.nextBlock
-    this.nextBlock = new Block()
-
-    if (!this.canBlockMove(this.block)) {
-      this.gameOver = true
-	  audioManager.gameover2();
-      this.saveGameState()
-      wx.showModal({
-        title: '游戏结束',
-        content: '得分：' + this.score,
-        showCancel: false,
-        success: () => {
-          this.resetGame()
-        }
-      })
-    }
-  }
-
-  update() {
-    // 更新游戏状态
-    if (this.canBlockMove(this.block, 0, 1)) {
-      this.block.updateDown(this.speed)
-    } else {
-      this.mergeBlock()
-      this.checkLines()
-      this.createNewBlock()
-    }
-  }
-
-  render() {
-    // 清空画布
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    drawBackground();
-
-    // 绘制游戏区域
-    this.matrix.render(this.ctx,this.block)
-    
-    // 绘制下一个方块
-    this.renderNextBlock()
-    
-    // 绘制分数和等级
-    this.renderScore()
-  }
-
-  renderScore() {
-	this.ctx.save()
-    this.ctx.fillStyle = '#000'
-    this.ctx.font = '20px Arial'
-	const X = this.canvas.width/wx.globalData.currentPixelRatio-BlockSize*5;
-	const Y = BlockSize*4;
-    this.ctx.fillText('分数：', X, Y+BlockSize*2)
-	this.ctx.fillStyle = '#F87'
-	this.ctx.fillText(this.score, X, Y+BlockSize*4)
-	this.ctx.fillStyle = '#000'
-    this.ctx.fillText('等级：' + this.level, X, Y+BlockSize*6)
-	this.ctx.fillText('最高分：' , X, Y+BlockSize*8)
-	this.ctx.fillStyle = '#F87'
-	this.ctx.fillText(this.maxScore, X, Y+BlockSize*10)
-	this.ctx.fillStyle = '#000'
-	this.ctx.fillText('下一个：', X, Y+BlockSize*12)
-	this.renderNextBlock(X,Y+BlockSize*14)
-	this.ctx.restore()
-  }
-
-  renderNextBlock(X,Y) {
-    if (this.nextBlock) {
-      // 保存当前上下文状态
-	  this.nextBlock.renderNext(this.ctx,BlockSize,X,Y)
-    }
-  }
-
-  moveBlockLeft() {
-    if (this.canBlockMove(this.block, -1, 0)) {
-      this.block.moveLeft()
-      audioManager.move2();
-    }
-  }
-
-  moveBlockRight() {
-    if (this.canBlockMove(this.block, 1, 0)) {
-      this.block.moveRight()
-      audioManager.move2();
-    }
-  }
-
-  moveBlockDown() {
-
-	for (let i = 20; i>0; i--) {
-		if (this.canBlockMove(this.block, 0, i)) {
-			this.block.moveDown(i)
-			//audioManager.move2();
-			break;
-    	}
+	constructor(canvas, ctx) {
+		this.canvas = canvas
+		this.ctx = ctx
+		this.block = null
+		this.nextBlock = null
+		this.matrix = new Matrix(BlockSize)
+		this.score = 0
+		this.maxScore = 0
+		this.level = 1
+		this.speed = 60
+		this.gameOver = false
+		this.isPaused = false
+		this.gap = 0 //下落结束空一帧
+		this.init()
 	}
-	
-  }
 
-  rotateBlock() {
-    const rotatedBlock = this.block.getRotatedBlock()
-    if (this.canBlockMove(rotatedBlock)) {
-      this.block.rotate()
-      audioManager.rotate();
-    }
-  }
+	init() {
+		this.nextBlock = new Block()
+		// 创建新方块
+		this.createNewBlock()
 
-  canBlockMove(block, offsetX = 0, offsetY = 0) {
-    return this.matrix.canBlockFit(block, offsetX, offsetY)
-  }
-
-  mergeBlock() {
-    this.matrix.mergeBlock(this.block)
-	audioManager.fall();
-  }
-
-  checkLines() {
-    const lines = this.matrix.checkLines()
-    if (lines > 0) {
-      this.updateScore(lines)
-      audioManager.clear();
-    }
-  }
-
-  updateScore(lines) {
-    const scores = [0, 100, 300, 700, 1500]
-    this.score += scores[lines]
-    
-    // 更新等级
-    const newLevel = Math.floor(this.score / 1000) + 1
-    if (newLevel !== this.level) {
-      this.level = newLevel
-      this.speed = Math.max(20,60 - (this.level - 1) * 5)
-    }
-    
-    this.saveGameState()
-  }
-
-  saveGameState() {
-	if (this.maxScore < this.score) {
-		this.maxScore = this.score
+		// 加载游戏状态
+		this.loadGameState()
 	}
-    wx.setStorage({
-      key: 'tetris_state',
-      data: {
-        maxScore: this.maxScore,
-      }
-    })
-  }
 
-  loadGameState() {
-    wx.getStorage({
-      key: 'tetris_state',
-      success: (res) => {
-        const { maxScore } = res.data
-		if (maxScore!=null && maxScore!=undefined) {
-			this.maxScore = maxScore
+	createNewBlock() {
+		this.block = this.nextBlock
+		this.nextBlock = new Block()
+
+		if (!this.canBlockMove(this.block)) {
+			this.gameOver = true
+			audioManager.gameover2();
+			this.saveGameState()
+			wx.showModal({
+				title: '游戏结束',
+				content: '得分：' + this.score,
+				showCancel: false,
+				success: () => {
+					this.resetGame()
+				}
+			})
 		}
-      }
-    })
-  }
+	}
 
-  resetGame() {
-    this.score = 0
-    this.level = 1
-    this.speed = 60
-    this.gameOver = false
-    this.matrix.reset()
-    this.nextBlock = new Block()
-    this.createNewBlock()
-    this.saveGameState()
-	audioManager.start2();
-  }
+	update() {
+		// 更新游戏状态
+		if (this.canBlockMove(this.block, 0, 1)) {
+			this.block.updateDown(this.speed)
+			this.gap = 20
+		} else if (this.gap > 0) {
+			this.gap --
+		} else {
+			this.mergeBlock()
+			this.checkLines()
+			this.createNewBlock()
+		}
+	}
+
+	render() {
+		// 清空画布
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+		drawBackground();
+
+		// 绘制游戏区域
+		this.matrix.render(this.ctx,this.block)
+		
+		// 绘制下一个方块
+		this.renderNextBlock()
+		
+		// 绘制分数和等级
+		this.renderScore()
+	}
+
+	renderScore() {
+		this.ctx.save()
+		this.ctx.fillStyle = '#000'
+		this.ctx.font = '20px Arial'
+		const X = this.canvas.width/wx.globalData.currentPixelRatio-BlockSize*5;
+		const Y = BlockSize*4;
+		this.ctx.fillText('分数：', X, Y+BlockSize*2)
+		this.ctx.fillStyle = '#F87'
+		this.ctx.fillText(this.score, X, Y+BlockSize*4)
+		this.ctx.fillStyle = '#000'
+		this.ctx.fillText('等级：' + this.level, X, Y+BlockSize*6)
+		this.ctx.fillText('最高分：' , X, Y+BlockSize*8)
+		this.ctx.fillStyle = '#F87'
+		this.ctx.fillText(this.maxScore, X, Y+BlockSize*10)
+		this.ctx.fillStyle = '#000'
+		this.ctx.fillText('下一个：', X, Y+BlockSize*12)
+		this.renderNextBlock(X,Y+BlockSize*14)
+		this.ctx.restore()
+	}
+
+	renderNextBlock(X,Y) {
+		if (this.nextBlock) {
+		// 保存当前上下文状态
+		this.nextBlock.renderNext(this.ctx,BlockSize,X,Y)
+		}
+	}
+
+	moveBlockLeft() {
+		if (this.canBlockMove(this.block, -1, 0)) {
+		this.block.moveLeft()
+		audioManager.move2();
+		}
+	}
+
+	moveBlockRight() {
+		if (this.canBlockMove(this.block, 1, 0)) {
+		this.block.moveRight()
+		audioManager.move2();
+		}
+	}
+
+	moveBlockDown() {
+
+		for (let i = 20; i>0; i--) {
+			if (this.canBlockMove(this.block, 0, i)) {
+				this.block.moveDown(i)
+				//audioManager.move2();
+				break;
+			}
+		}
+		
+	}
+
+	rotateBlock() {
+		const rotatedBlock = this.block.getRotatedBlock()
+		if (this.canBlockMove(rotatedBlock)) {
+			this.block.rotate()
+			audioManager.rotate();
+		}
+	}
+
+	canBlockMove(block, offsetX = 0, offsetY = 0) {
+		return this.matrix.canBlockFit(block, offsetX, offsetY)
+	}
+
+	mergeBlock() {
+		this.matrix.mergeBlock(this.block)
+		audioManager.fall();
+	}
+
+	checkLines() {
+		const lines = this.matrix.checkLines()
+		if (lines > 0) {
+			this.updateScore(lines)
+			audioManager.clear();
+		}
+	}
+
+	updateScore(lines) {
+		const scores = [0, 100, 300, 700, 1500]
+		this.score += scores[lines]
+		
+		// 更新等级
+		const newLevel = Math.floor(this.score / 1000) + 1
+		if (newLevel !== this.level) {
+		this.level = newLevel
+		this.speed = Math.max(20,60 - (this.level - 1) * 5)
+		}
+		
+		this.saveGameState()
+	}
+
+	saveGameState() {
+		if (this.maxScore < this.score) {
+			this.maxScore = this.score
+		}
+		wx.setStorage({
+		key: 'tetris_state',
+		data: {
+			maxScore: this.maxScore,
+		}
+		})
+	}
+
+	loadGameState() {
+		wx.getStorage({
+		key: 'tetris_state',
+		success: (res) => {
+			const { maxScore } = res.data
+			if (maxScore!=null && maxScore!=undefined) {
+				this.maxScore = maxScore
+			}
+		}
+		})
+	}
+
+	resetGame() {
+		this.score = 0
+		this.level = 1
+		this.speed = 60
+		this.gameOver = false
+		this.matrix.reset()
+		this.nextBlock = new Block()
+		this.createNewBlock()
+		this.saveGameState()
+		audioManager.start2();
+	}
 
   pause() {
     this.isPaused = true
