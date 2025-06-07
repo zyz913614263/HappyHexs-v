@@ -51,15 +51,18 @@ class AudioManager {
 			
 			this.audioContexts = {
 				start: this.createAudioContext('res/music/start.mp3'),
-				clear: this.createAudioContext('res/music/music.mp3'),
-				fall: this.createAudioContext('res/music/music.mp3'),
+				clear: this.createAudioContext('res/music/teris.mp3'),
+				fall: this.createAudioContext('res/music/teris.mp3'),
 				gameover: this.createAudioContext('res/music/newcord.mp3'),
-				rotate: this.createAudioContext('res/music/music.mp3'),
+				rotate: this.createAudioContext('res/music/teris.mp3'),
 				combotime: this.createAudioContext('res/music/time.mp3',true),
 				move: this.createAudioContext('res/music/move.mp3'),
 				good: this.createAudioContext('res/music/good.mp3'),
 				great: this.createAudioContext('res/music/great.mp3'),
 				unbleaveable: this.createAudioContext('res/music/unbleaveable.mp3'),
+				move2: this.createAudioContext('res/music/teris.mp3'),
+				gameover2: this.createAudioContext('res/music/teris.mp3'),
+				start2: this.createAudioContext('res/music/teris.mp3'),
 	
 				//perfect: this.createAudioContext('./music/perfect.mp3'),
 			};
@@ -108,6 +111,11 @@ class AudioManager {
         this.playSegment('start', 0, 2.5);
     }
 
+	// 游戏开始音效
+    start2() {
+        this.playSegment('start2', 3.7202, 3.6224);
+    }
+
     // 清除音效
     clear() {
         this.playSegment('clear', 0, 0.7675);
@@ -116,6 +124,19 @@ class AudioManager {
     // 下落音效
     fall() {
         this.playSegment('fall', 1.2558, 0.3546);
+    }
+
+	 // 下落音效
+	move2() {
+        this.playSegment('move2',2.9088, 0.1437);
+    }
+
+	rotate() {
+        this.playSegment('rotate', 2.2471, 0.0807);
+    }
+
+	gameover2() {
+        this.playSegment('gameover2',  8.1276, 1.1437);
     }
 
     // 游戏结束音效

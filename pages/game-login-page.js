@@ -2,9 +2,12 @@ import { drawRoundRect } from '../comon.js';
 import { settings } from '../settings.js';
 import { audioManager } from '../entry/music.js';
 import {Init as InitPopo } from './bubales.js'
+import{ InitTeris } from './teris.js'
 const tt = wx
 let bubbleX, bubbleY,btnWidth,btnHeight;
+let terisX, terisY;
 let canvas, ctx;
+let step = 80
 
 export function touchPop(e) {
 	if (wx.globalData.gameState !== 0) return;
@@ -35,6 +38,37 @@ export function touchPop(e) {
 		audioManager.stopBGM();
 	}
 }
+
+export function touchTeris(e) {
+	if (wx.globalData.gameState !== 0) return;
+	//const bubbleX = centerX; // 按钮居中
+	//const bubbleY = canvas.height / wx.globalData.currentPixelRatio - 250 * settings.scale; // 距离底部20像素
+	const touch = e.touches[0]; // 获取第一个触摸点
+	const clickX = touch.clientX //* wx.globalData.currentPixelRatio;
+	const clickY = touch.clientY //* wx.globalData.currentPixelRatio;
+	console.log('触摸坐标:', clickX, clickY,terisX,terisY); // 调试信息
+	// 检查触摸点是否在按钮范围内
+	if (
+		clickX >= terisX - btnWidth / 2 &&
+		clickX <= terisX + btnWidth / 2 &&
+		clickY >= terisY - btnHeight / 2 &&
+		clickY <= terisY + btnHeight / 2
+	) {
+		/*console.log('泡泡按钮被点击了！');
+		// 在这里添加按钮点击后的逻辑
+		wx.showToast({
+			title: '泡泡按钮被点击！',
+			icon: 'none',
+			duration: 2000
+		});*/
+		//animate();
+		InitTeris(canvas,ctx)
+		wx.globalData.gameState = 4
+		wx.offTouchStart(touchTeris);
+		audioManager.stopBGM();
+	}
+}
+
 
 export function drawStartScreen(c,ca) {
 	canvas = ca;
@@ -311,7 +345,7 @@ export function drawStartScreen(c,ca) {
 	// 绘制按钮文字
 	ctx.save();
 	
-	bubbleX = centerX; // 按钮居中
+	bubbleX = centerX-step*settings.scale; // 按钮居中
 	btnWidth = 100 * settings.scale;
 	btnHeight = 50 * settings.scale;
 
@@ -335,7 +369,27 @@ export function drawStartScreen(c,ca) {
 	ctx.shadowColor = '#000000';
 	ctx.shadowBlur = 10;
 	ctx.textAlign = 'center';
-	ctx.fillText('泡泡', centerX, bubbleY + 7 * settings.scale);
+	ctx.fillText('泡泡', bubbleX, bubbleY + 7 * settings.scale);
+	ctx.restore();
+
+
+
+	ctx.save();
+	
+	terisX = centerX+step*settings.scale; // 按钮居中
+	terisY = bubbleY; // 距离底部20像素
+	
+	// 绘制按钮背景
+	drawRoundRect(ctx, terisX - btnWidth / 2, terisY - btnHeight / 2, btnWidth, btnHeight, 10 * settings.scale);
+
+	ctx.fillStyle = bubbleGradient;
+	ctx.fill();
+	ctx.font = `bold ${20 * settings.scale}px Arial`;
+	ctx.fillStyle = '#FFFFFF';
+	ctx.shadowColor = '#000000';
+	ctx.shadowBlur = 10;
+	ctx.textAlign = 'center';
+	ctx.fillText('俄罗斯方块', terisX, terisY + 7 * settings.scale);
 	ctx.restore();
 	
 	// 使用 wx.onTouchStart 添加触摸事件监听
