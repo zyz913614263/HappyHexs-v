@@ -92,4 +92,20 @@ export class Block {
       }
     }
   }
+  renderNext(ctx,blockSize,X,Y) {
+	//console.log(this.shape,X,Y,blockSize);
+    for (let i = 0; i < this.shape.length; i++) {
+      for (let j = 0; j < this.shape[i].length; j++) {
+        if (this.shape[i][j]) {
+          const x = X + j * blockSize
+          const y = Y + (i) * blockSize
+          ctx.fillStyle = this.color
+          // 填充方块
+          ctx.fillRect(x, y, blockSize, blockSize)
+          // 绘制边框
+          ctx.strokeRect(x, y, blockSize, blockSize)
+        }
+      }
+    }
+  }
 } 

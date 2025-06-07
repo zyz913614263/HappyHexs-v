@@ -89,18 +89,21 @@ export class Matrix {
 	
 		// 保存当前的坐标系状态
 		ctx.save();
-
-		// 计算并应用变换
-		const canvasWidth = ctx.canvas.width / wx.globalData.currentPixelRatio;
-		const canvasHeight = ctx.canvas.height / wx.globalData.currentPixelRatio;
-		const totalWidth = this.cols * this.blockSize;
-		const totalHeight = this.rows * this.blockSize;
-		
 		// 移动坐标系原点到画布中心，并向右下偏移
 		const X = this.blockSize//(canvasWidth - this.cols*this.blockSize)/2;
 		//console.log(X,this.cols,this.rows,this.blockSize,canvasWidth);
 		const Y = this.blockSize*5;
 		ctx.translate(X,Y);
+		// 计算并应用变换
+		const canvasWidth = ctx.canvas.width / wx.globalData.currentPixelRatio;
+		const canvasHeight = ctx.canvas.height / wx.globalData.currentPixelRatio;
+		const totalWidth = this.cols * this.blockSize;
+		const totalHeight = this.rows * this.blockSize;
+
+		ctx.fillStyle ='rgb(167, 167, 167)';
+		ctx.fillRect(0, 0, totalWidth, totalHeight);
+		
+		
 		// 第一部分：绘制背景网格
 		ctx.strokeStyle = '#ccc'  // 设置网格线颜色为浅灰色
 		for (let i = 0; i < this.rows; i++) {  // 遍历所有行

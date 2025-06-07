@@ -13,6 +13,7 @@ export class Game {
     this.canvas = canvas
     this.ctx = ctx
     this.block = null
+    this.nextBlock = null
     this.matrix = new Matrix(BlockSize)
     this.score = 0
 	this.maxScore = 0
@@ -20,13 +21,12 @@ export class Game {
     this.speed = 60
     this.gameOver = false
     this.isPaused = false
-	this.nextBlock = null
     
     this.init()
   }
 
   init() {
- 
+	this.nextBlock = new Block()
     // 创建新方块
     this.createNewBlock()
 
@@ -35,7 +35,9 @@ export class Game {
   }
 
   createNewBlock() {
-    this.block = new Block()
+    this.block = this.nextBlock
+    this.nextBlock = new Block()
+
     if (!this.canBlockMove(this.block)) {
       this.gameOver = true
 	  audioManager.gameover2();
@@ -70,19 +72,38 @@ export class Game {
     // 绘制游戏区域
     this.matrix.render(this.ctx,this.block)
     
+    // 绘制下一个方块
+    this.renderNextBlock()
+    
     // 绘制分数和等级
     this.renderScore()
   }
 
   renderScore() {
+	this.ctx.save()
     this.ctx.fillStyle = '#000'
     this.ctx.font = '20px Arial'
 	const X = this.canvas.width/wx.globalData.currentPixelRatio-BlockSize*5;
 	const Y = BlockSize*4;
-    this.ctx.fillText('分数：' + this.score, X, Y+BlockSize*2)
-    this.ctx.fillText('等级：' + this.level, X, Y+BlockSize*5)
-	this.ctx.fillText('最高分：' + this.maxScore, X, Y+BlockSize*8)
-	this.ctx.fillText('下一个：', X, Y+BlockSize*11)
+    this.ctx.fillText('分数：', X, Y+BlockSize*2)
+	this.ctx.fillStyle = '#F87'
+	this.ctx.fillText(this.score, X, Y+BlockSize*4)
+	this.ctx.fillStyle = '#000'
+    this.ctx.fillText('等级：' + this.level, X, Y+BlockSize*6)
+	this.ctx.fillText('最高分：' , X, Y+BlockSize*8)
+	this.ctx.fillStyle = '#F87'
+	this.ctx.fillText(this.maxScore, X, Y+BlockSize*10)
+	this.ctx.fillStyle = '#000'
+	this.ctx.fillText('下一个：', X, Y+BlockSize*12)
+	this.renderNextBlock(X,Y+BlockSize*14)
+	this.ctx.restore()
+  }
+
+  renderNextBlock(X,Y) {
+    if (this.nextBlock) {
+      // 保存当前上下文状态
+	  this.nextBlock.renderNext(this.ctx,BlockSize,X,Y)
+    }
   }
 
   moveBlockLeft() {
@@ -180,6 +201,7 @@ export class Game {
     this.speed = 60
     this.gameOver = false
     this.matrix.reset()
+    this.nextBlock = new Block()
     this.createNewBlock()
     this.saveGameState()
 	audioManager.start2();
@@ -263,10 +285,22 @@ function touch(e) {
 
 
 function drawBackground() {
-  //console.log('drawBackground');
-  //context.clearRect(0, 0, canvas.width, canvas.height);
+	const canvasWidth = context.canvas.width / wx.globalData.currentPixelRatio;
+	const canvasHeight = context.canvas.height / wx.globalData.currentPixelRatio;
+	
+	//console.log('画布尺寸:', canvasWidth, canvasHeight); // 调试信息
+	
+	// 清空画布
+	//ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+	//const innerGradient = ctx.createLinearGradient(-canvasWidth, -canvasHeight, canvasWidth, canvasHeight);
+	//innerGradient.addColorStop(0, '#3498db');
+	//innerGradient.addColorStop(1, '#2980b9');
 
-  	context.fillStyle = "#f0f0f0";
+	// 绘制半透明背景
+	//ctx.fillStyle = innerGradient//'rgba(0, 0, 0, 0.5)';
+	//ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  	context.fillStyle ='rgb(44, 93, 93)';
   	context.fillRect(0, 0, canvas.width, canvas.height);
 
 	// 绘制返回按钮
@@ -290,17 +324,16 @@ function drawBackground() {
 	wx.globalData.returnButton = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
 
 	// 绘制返回按钮
-	const canvasWidth = context.canvas.width / wx.globalData.currentPixelRatio;
-	const canvasHeight = context.canvas.height / wx.globalData.currentPixelRatio;
-	const btnLeftX = 20; // 按钮左上角 X 坐标
-	const btnLeftY = canvasHeight-100; // 按钮左上角 Y 坐标
+	
+	const btnLeftX = BlockSize*1; // 按钮左上角 X 坐标
+	const btnLeftY = canvasHeight-BlockSize*8; // 按钮左上角 Y 坐标
 	
 	context.save();
-	context.fillStyle = 'rgba(87, 8, 247, 0)'; // 按钮背景颜色
+	context.fillStyle = 'rgba(255, 255, 0, 1)'; // 按钮背景颜色
 	context.fillRect(btnLeftX, btnLeftY, btnWidth, btnHeight);
 	
 	context.font = '20px Arial';
-	context.fillStyle = '#bdc3c7'; // 按钮文字颜色
+	context.fillStyle = 'rgb(0,0,0)'; // 按钮文字颜色
 	context.textAlign = 'center';
 	context.textBaseline = 'middle';
 	context.fillText('左', btnLeftX + btnWidth / 2, btnLeftY + btnHeight / 2);
@@ -310,13 +343,13 @@ function drawBackground() {
 	wx.globalData.leftButton = { x: btnLeftX, y: btnLeftY, width: btnWidth, height: btnHeight };
 
 	context.save();
-	const btnDownX = 20+btnHeight*2; // 按钮左上角 X 坐标
-	const btnDownY = canvasHeight-100; // 按钮左上角 Y 坐标
-	context.fillStyle = 'rgba(87, 8, 247, 0)'; // 按钮背景颜色
+	const btnDownX = BlockSize+btnHeight*2; // 按钮左上角 X 坐标
+	const btnDownY = canvasHeight-BlockSize*4; // 按钮左上角 Y 坐标
+	context.fillStyle = 'rgba(255, 255, 0, 1)'; // 按钮背景颜色
 	context.fillRect(btnDownX, btnDownY, btnWidth, btnHeight);
 	
 	context.font = '20px Arial';
-	context.fillStyle = '#bdc3c7'; // 按钮文字颜色
+	context.fillStyle = 'rgb(0,0,0)'; // 按钮文字颜色
 	context.textAlign = 'center';
 	context.textBaseline = 'middle';
 	context.fillText('下', btnDownX + btnWidth / 2, btnDownY + btnHeight / 2);
@@ -326,13 +359,13 @@ function drawBackground() {
 	wx.globalData.downButton = { x: btnDownX, y: btnDownY, width: btnWidth, height: btnHeight };
 
 	context.save();
-	const btnRightX = 20+btnHeight*4; // 按钮左上角 X 坐标
-	const btnRightY = canvasHeight-100; // 按钮左上角 Y 坐标
-	context.fillStyle = 'rgba(87, 8, 247, 0)'; // 按钮背景颜色
+	const btnRightX = BlockSize+btnHeight*4; // 按钮左上角 X 坐标
+	const btnRightY = canvasHeight-BlockSize*8; // 按钮左上角 Y 坐标
+	context.fillStyle = 'rgba(255, 255, 0, 1)'; // 按钮背景颜色
 	context.fillRect(btnRightX, btnRightY, btnWidth, btnHeight);
 	
 	context.font = '20px Arial';
-	context.fillStyle = '#bdc3c7'; // 按钮文字颜色
+	context.fillStyle = 'rgb(0,0,0)'; // 按钮文字颜色
 	context.textAlign = 'center';
 	context.textBaseline = 'middle';
 	context.fillText('右', btnRightX + btnWidth / 2, btnRightY + btnHeight / 2);
@@ -340,22 +373,32 @@ function drawBackground() {
 	
 	// 将按钮位置存储到全局变量，供触摸事件使用
 	wx.globalData.rightButton = { x: btnRightX, y: btnRightY, width: btnWidth, height: btnHeight };
-
+	
 	context.save();
-	const btnRotateX = 20+btnHeight*6; // 按钮左上角 X 坐标
-	const btnRotateY = canvasHeight-100; // 按钮左上角 Y 坐标
-	context.fillStyle = 'rgba(87, 8, 247, 0)'; // 按钮背景颜色
-	context.fillRect(btnRotateX, btnRotateY, btnWidth, btnHeight);
+	const btnRotateX = BlockSize*4+btnHeight*6; // 按钮左上角 X 坐标
+	const btnRotateY = canvasHeight-BlockSize*8; // 按钮左上角 Y 坐标
+	drawCircle(context,btnRotateX+BlockSize,btnRotateY+BlockSize,btnWidth/2,'rgb(255, 0, 0)');
 	
 	context.font = '20px Arial';
-	context.fillStyle = '#bdc3c7'; // 按钮文字颜色
+	context.fillStyle = 'rgb(246, 255, 0)'; // 按钮文字颜色
 	context.textAlign = 'center';
 	context.textBaseline = 'middle';
-	context.fillText('旋转', btnRotateX + btnWidth / 2, btnRotateY + btnHeight / 2);
+	context.fillText('旋转', btnRotateX + btnWidth / 3, btnRotateY + btnHeight / 2);
 	context.restore();
 	
 	// 将按钮位置存储到全局变量，供触摸事件使用
 	wx.globalData.rotateButton = { x: btnRotateX, y: btnRotateY, width: btnWidth, height: btnHeight };
+}
+
+// 基本画圆方法
+function drawCircle(ctx, x, y, radius, color) {
+    ctx.save();
+	ctx.beginPath();  // 开始一个新的路径
+    ctx.arc(x, y, radius, 0, Math.PI * 2);  // 画一个完整的圆
+    ctx.fillStyle = color;  // 设置填充颜色
+    ctx.fill();  // 填充圆
+    ctx.closePath();  // 关闭路径
+	ctx.restore();
 }
 
 
