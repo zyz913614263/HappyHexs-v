@@ -233,6 +233,14 @@ export function animLoop() {
 	requestAnimationFrame(animLoop);
 }
 
+// 检查点击是否在按钮区域内
+function isButtonClicked(touch, button) {
+    return button && 
+        touch.clientX >= button.x && 
+        touch.clientX <= button.x + button.width &&
+        touch.clientY >= button.y && 
+        touch.clientY <= button.y + button.height;
+}
 
 function handleGameStart(e) {
 	// 触摸事件处理
@@ -276,142 +284,81 @@ function handleGameStart(e) {
 			break;
 	}
 }
-// 设置开始界面
+
+// 修改setStartScreen函数
 function setStartScreen() {
-	let isAddToDesktopButtonTouched = false;
     // 添加触摸事件监听
     function handleMainPage(e) {
         const touch = e.touches[0];
-        const canvasWidth = canvas.width / wx.globalData.currentPixelRatio;
-        const canvasHeight = canvas.height / wx.globalData.currentPixelRatio;
-        const btnWidth = 100 * settings.scale;
-        const btnHeight = 80 * settings.scale;
-        const btnX = (canvasWidth - btnWidth) / 2;
-        const btnY = (canvasHeight - btnHeight) / 2;
+        const canvas = wx.globalData.canvas;
+        const screenWidth = canvas.width / wx.globalData.currentPixelRatio;
+        const screenHeight = canvas.height / wx.globalData.currentPixelRatio;
+        const centerX = screenWidth / 2;
+        const centerY = screenHeight / 2;
         
-        // 直接使用触摸点坐标
-        const x = touch.clientX;
-        const y = touch.clientY;
-        
-        //console.log('触摸位置:', x, y); // 调试信息
-        //console.log('按钮区域:', btnX, btnY, btnWidth, btnHeight); // 调试信息
-        
-        // 检查是否点击了按钮
-        if (wx.globalData.gameState == 0 && x >= btnX && x <= btnX + btnWidth &&
-            y >= btnY && y <= btnY + btnHeight) {
-			wx.offTouchStart(handleMainPage);
-				// 开始游戏
+        // 检查是否点击了开始按钮（六边形）
+        if (wx.globalData.gameState === 0 && 
+            Math.sqrt(Math.pow(touch.clientX - centerX, 2) + Math.pow(touch.clientY - centerY, 2)) < 200 * settings.scale) {
+            
+            wx.offTouchStart(handleMainPage);
+            // 开始游戏
             wx.globalData.gameState = 1;
-			wx.onTouchStart(handleGameStart);
-			/*if (wx.globalData.startScreenInterval) {
-				clearInterval(wx.globalData.startScreenInterval);
-				wx.globalData.startScreenInterval = null;
-			}*/
+            wx.onTouchStart(handleGameStart);
             wx.globalData.lastTime = Date.now();
             console.log("开始游戏");
             
-            
-			audioManager.start();
-            
+            audioManager.start();
             
             // 清除开始界面的重绘定时器
             if (wx.globalData.startScreenInterval) {
                 clearInterval(wx.globalData.startScreenInterval);
                 wx.globalData.startScreenInterval = null;
             }
+            return;
         }
-		/*
-		const centerX = canvasWidth / 2;
-		const centerY = canvasHeight / 2;
-		const saveY = centerY + 380 * settings.scale;
-		const saveX = centerX -150*settings.scale;
-		// 检查是否点击保存按钮
-        if (x >= saveX - btnWidth/2 &&
-            x <= saveX + btnWidth/2 &&
-            y >= saveY - btnHeight/2 &&
-            y <= saveY + btnHeight/2) {
-            
-            // 调用复访能力
-            wx.navigateToScene({
-                scene: 'sidebar',
-                success: () => {
-                    console.log('保存成功');
-                },
-                fail: (err) => {
-                    console.error('保存失败:', err);
-                }
-            });
-            return;
-        }*/
-		/*// 检查是否点击添加到桌面按钮
-        const addToDesktopX = centerX ;
-        const addToDesktopY = centerY + 380 * settings.scale;
-        if (x >= addToDesktopX - btnWidth/2 &&
-            x <= addToDesktopX + btnWidth/2 &&
-            y >= addToDesktopY - btnHeight/2 &&
-            y <= addToDesktopY + btnHeight/2) {
-            
-			isAddToDesktopButtonTouched = true;
-            return;
-        }*/
-    }
-
-	function handleTouchEnd(e) {
-		const canvasWidth = canvas.width / wx.globalData.currentPixelRatio;
-		const canvasHeight = canvas.height / wx.globalData.currentPixelRatio;
-        if (isAddToDesktopButtonTouched) {
-            // 在触摸结束时调用添加到桌面API
-            wx.addShortcut({
-                success: () => {
-                    console.log('添加到桌面成功');
+        
+        // 检查是否点击了分享按钮
+        if (isButtonClicked(touch, wx.globalData.mainShareButton)) {
+            // 分享游戏
+            wx.shareAppMessage({
+                title: '快乐六边形 - 考验反应力的休闲小游戏',
+                desc: '快来和我一起玩快乐六边形吧！',
+                imageUrl: 'res/images/share.png',
+                success: function() {
                     wx.showToast({
-                        title: '添加到桌面成功',
+                        title: '分享成功',
                         icon: 'success',
                         duration: 2000
                     });
                 },
-                fail: (err) => {
-                    console.error('添加到桌面失败:', err);
+                fail: function() {
                     wx.showToast({
-                        title: '添加到桌面失败',
+                        title: '分享失败',
                         icon: 'none',
                         duration: 2000
                     });
                 }
             });
-            isAddToDesktopButtonTouched = false;
             return;
         }
-		const centerX = canvasWidth / 2;
-		const centerY = canvasHeight / 2;
-		if (wx.globalData.gameState === 0) {
-			const touch = e.changedTouches[0];
-            const shareY = centerY + 380 * settings.scale;
-            const shareX = centerX + 150 * settings.scale;
-            const btnWidth = 200 * settings.scale;
-            const btnHeight = 80 * settings.scale;
-
-            if (touch.clientX >= shareX - btnWidth/2 &&
-                touch.clientX <= shareX + btnWidth/2 &&
-                touch.clientY >= shareY - btnHeight/2 &&
-                touch.clientY <= shareY + btnHeight/2) {
-                shareFeedCard();
-                return;
-            }
-		}
+        
+        // 检查是否点击了泡泡按钮
+        if (isButtonClicked(touch, wx.globalData.bubbleButton)) {
+            touchPop(e);
+            return;
+        }
+        
+        // 检查是否点击了方块按钮
+        if (isButtonClicked(touch, wx.globalData.terisButton)) {
+            touchTeris(e);
+            return;
+        }
     }
     
-    //wx.onTouchEnd(handleTouchEnd);
     // 注册触摸事件
     wx.onTouchStart(handleMainPage);
-	wx.onTouchStart(touchPop)
-	wx.onTouchStart(touchTeris)
-    
-    // 绘制开始界面
-    //drawStartScreen();
-	 // 添加重绘定时器，确保界面持续显示
-	// wx.globalData.startScreenInterval = setInterval(drawStartScreen, 1000 / 60);
 }
+
 // 添加Feed异化卡相关的全局配置
 wx.globalData.feedCard = {
     isSupported: false,
@@ -625,17 +572,68 @@ function checkGameOver() {
 	// 游戏应该只在堆叠超过5个方块时结束
 }
 
-// 游戏结束处理
+// 分享功能
+function shareGame(score, isHighScore = false) {
+    const shareTitle = isHighScore ? `我在快乐六边形中创造了新纪录：${score}分！` : `我在快乐六边形中获得了${score}分！`;
+    const shareContent = `快来挑战我的分数吧！`;
+    
+    wx.shareAppMessage({
+        title: shareTitle,
+        desc: shareContent,
+        imageUrl: 'res/images/share.png', // 确保这个图片存在
+        success: function() {
+            wx.showToast({
+                title: '分享成功',
+                icon: 'success',
+                duration: 2000
+            });
+        },
+        fail: function() {
+            wx.showToast({
+                title: '分享失败',
+                icon: 'none',
+                duration: 2000
+            });
+        }
+    });
+}
+
+// 处理游戏结束时的触摸事件
+function handleGameOverTouch(e) {
+    const touch = e.touches[0];
+    const shareButton = wx.globalData.shareButton;
+    
+    if (shareButton && 
+        touch.clientX >= shareButton.x && 
+        touch.clientX <= shareButton.x + shareButton.width &&
+        touch.clientY >= shareButton.y && 
+        touch.clientY <= shareButton.y + shareButton.height) {
+        // 点击了分享按钮
+        const isHighScore = wx.globalData.score === wx.globalData.highScore;
+        shareGame(wx.globalData.score, isHighScore);
+    } else {
+        // 点击了其他区域，重新开始游戏
+        wx.globalData.gameState = 0;
+        wx.offTouchStart(handleGameOverTouch);
+        setStartScreen();
+    }
+}
+
+// 修改游戏结束处理
 function gameOver() {
-	// 设置游戏状态为结束
-	wx.globalData.gameState = 2;
-	// 绘制游戏结束界面
-	//wx.offTouchStart(handleGameStart);
-	audioManager.gameover();
-	if (wx.globalData.score > wx.globalData.highScore) {
-		wx.globalData.highScore = wx.globalData.score;
-		saveHighScore(wx.globalData.score);
-	}
+    // 设置游戏状态为结束
+    wx.globalData.gameState = 2;
+    // 播放游戏结束音效
+    audioManager.gameover();
+    
+    // 更新最高分
+    if (wx.globalData.score > wx.globalData.highScore) {
+        wx.globalData.highScore = wx.globalData.score;
+        saveHighScore(wx.globalData.score);
+    }
+    
+    // 注册游戏结束界面的触摸事件
+    wx.onTouchStart(handleGameOverTouch);
 }
 
 //碰撞检测
@@ -747,6 +745,39 @@ function floodFill(hex, side, index, deleting) {
                 }
             }
         }
+    }
+}
+
+// 处理主界面分享按钮点击
+function handleMainPageShare(e) {
+    const touch = e.touches[0];
+    const mainShareButton = wx.globalData.mainShareButton;
+    
+    if (mainShareButton && 
+        touch.clientX >= mainShareButton.x && 
+        touch.clientX <= mainShareButton.x + mainShareButton.width &&
+        touch.clientY >= mainShareButton.y && 
+        touch.clientY <= mainShareButton.y + mainShareButton.height) {
+        // 分享游戏
+        wx.shareAppMessage({
+            title: '快乐六边形 - 考验反应力的休闲小游戏',
+            desc: '快来和我一起玩快乐六边形吧！',
+            imageUrl: 'res/images/share.png', // 确保这个图片存在
+            success: function() {
+                wx.showToast({
+                    title: '分享成功',
+                    icon: 'success',
+                    duration: 2000
+                });
+            },
+            fail: function() {
+                wx.showToast({
+                    title: '分享失败',
+                    icon: 'none',
+                    duration: 2000
+                });
+            }
+        });
     }
 }
 
