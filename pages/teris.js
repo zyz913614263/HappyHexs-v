@@ -230,7 +230,8 @@ function InitTeris(c, ctxs) {
 	context = ctxs;
 	BlockSize = context.canvas.width/wx.globalData.currentPixelRatio/17;
 		
-	wx.onTouchStart(touch);
+	// 替换触摸事件处理函数
+	wx.onTouchStart(handleTouch);
 
 	game = new Game(canvas, context);
 	
@@ -239,60 +240,60 @@ function InitTeris(c, ctxs) {
 	console.log('Init',canvas.width,canvas.height,BlockSize,wx.globalData.currentPixelRatio);
 }
 
-function checkTouch(x,y,button) {
-	if (
-		x >= button.x &&
-		x <= button.x + button.width &&
-		y >= button.y &&
-		y <= button.y + button.height
-	  ) {
-		return true;
-	  }else{
-		return false;	
-	  }
-}
-
-function touch(e) {
+// 修改触摸事件处理函数
+function handleTouch(e) {
 	const touch = e.touches[0];
-
-	// 获取返回按钮的位置信息
-	const returnButton = wx.globalData.returnButton;
-	const clickX = touch.clientX;
-	const clickY = touch.clientY;
-	// 检查触摸点是否在返回按钮范围内
-	if (checkTouch(clickX,clickY,returnButton)) {
+	
+	// 检查是否点击了返回按钮
+	const returnButton = buttonManager.getButton('return');
+	if (returnButton && returnButton.isClicked(touch)) {
 		console.log('返回按钮被点击');
-		wx.offTouchStart(touch); // 移除触摸事件监听
-		wx.globalData.gameState = 999; // 假设 1 表示返回到主菜单
-		
+		wx.offTouchStart(handleTouch);
+		wx.globalData.gameState = 999;
 		return;
 	}
-	// 检查触摸点是否在返回按钮范围内
-	if (checkTouch(clickX,clickY,wx.globalData.leftButton)) {
-		game.moveBlockLeft()
-		
-		return;
-	}
-	if (checkTouch(clickX,clickY,wx.globalData.downButton)) {
-		game.moveBlockDown()
-		return;
-	}
-	if (checkTouch(clickX,clickY,wx.globalData.rightButton)) {
-		
-		game.moveBlockRight()
-		return;
-	}
-	if (checkTouch(clickX,clickY,wx.globalData.rotateButton)) {
-		game.rotateBlock()
-		return;
-	}
-	if (checkTouch(clickX,clickY,wx.globalData.pauseButton)) {
+
+	// 检查是否点击了暂停按钮
+	const pauseButton = buttonManager.getButton('pause');
+	if (pauseButton && pauseButton.isClicked(touch)) {
 		if (game.isPaused) {
 			game.resume();
 		} else {
 			game.pause();
 		}
-		audioManager.move()
+		pauseButton.text = game.isPaused ? '继续' : '暂停';
+		drawBackground();
+		audioManager.move();
+		return;
+	}
+
+	// 如果游戏暂停，不处理其他按钮点击
+	if (game.isPaused) {
+		return;
+	}
+
+	// 检查其他按钮
+	const leftButton = buttonManager.getButton('left');
+	if (leftButton && leftButton.isClicked(touch)) {
+		game.moveBlockLeft();
+		return;
+	}
+
+	const rightButton = buttonManager.getButton('right');
+	if (rightButton && rightButton.isClicked(touch)) {
+		game.moveBlockRight();
+		return;
+	}
+
+	const downButton = buttonManager.getButton('down');
+	if (downButton && downButton.isClicked(touch)) {
+		game.moveBlockDown();
+		return;
+	}
+
+	const rotateButton = buttonManager.getButton('rotate');
+	if (rotateButton && rotateButton.isClicked(touch)) {
+		game.rotateBlock();
 		return;
 	}
 }
@@ -310,40 +311,47 @@ function drawBackground() {
 	// 初始化所有按钮
 	buttonManager.clear();
 
-	// 添加返回按钮
+	// 计算基础尺寸
+	const screenRatio = canvasWidth / canvasHeight;
+	const baseSize = Math.min(canvasWidth / 10, canvasHeight / 14);
+	const buttonWidth = baseSize * 2;
+	const buttonHeight = baseSize;
+	const horizontalSpacing = baseSize;
+	const verticalSpacing = baseSize * 0.8;
+
+	// 添加返回按钮 - 左上角
 	buttonManager.addButton(
 		'return',
-		20,
-		20,
-		100 * settings.scale,
-		50 * settings.scale,
+		baseSize * 0.5,
+		baseSize,
+		buttonWidth,
+		buttonHeight,
 		'返回',
 		{
 			backgroundColor: 'rgba(190, 243, 187, 0)',
 			textColor: '#bdc3c7',
-			fontSize: 20,
+			fontSize: Math.floor(baseSize * 0.45),
 			onClick: () => {
 				wx.globalData.gameState = 999;
 			}
 		}
 	);
 
-	// 添加暂停按钮
+	// 添加暂停按钮 - 返回按钮右侧
 	buttonManager.addButton(
 		'pause',
-		canvasWidth - 120 * settings.scale,
-		60 * settings.scale,
-		100 * settings.scale,
-		50 * settings.scale,
+		baseSize * 0.5 + buttonWidth + horizontalSpacing,
+		baseSize,
+		buttonWidth,
+		buttonHeight,
 		game.isPaused ? '继续' : '暂停',
 		{
 			backgroundColor: 'rgba(255, 165, 0, 0.8)',
 			hoverColor: 'rgba(255, 140, 0, 0.8)',
 			textColor: '#FFFFFF',
-			fontSize: 20,
+			fontSize: Math.floor(baseSize * 0.45),
 			onClick: () => {
 				game.togglePause();
-				// 更新按钮文字
 				const pauseButton = buttonManager.getButton('pause');
 				if (pauseButton) {
 					pauseButton.text = game.isPaused ? '继续' : '暂停';
@@ -352,75 +360,84 @@ function drawBackground() {
 		}
 	);
 
-	// 添加左移按钮
+	// 计算控制按钮区域
+	const bottomPadding = baseSize * 0.5; // 减小底部边距
+	const controlAreaWidth = buttonWidth * 2 + horizontalSpacing; // 控制区域宽度
+	const controlStartX = (canvasWidth - controlAreaWidth) / 2; // 控制区域起始X坐标
+
+	// 第一排按钮 Y 坐标（更靠下）
+	const firstRowY = canvasHeight - bottomPadding - buttonHeight*1.5  - verticalSpacing;
+	// 第二排按钮 Y 坐标（更靠下）
+	const secondRowY = canvasHeight - bottomPadding - buttonHeight;
+
+	// 左移按钮（第一排左）
 	buttonManager.addButton(
 		'left',
-		BlockSize * 1,
-		canvasHeight - BlockSize * 8,
-		100 * settings.scale,
-		50 * settings.scale,
-		'左',
+		controlStartX - buttonWidth ,  // 向左移动一个按钮宽度加间距
+		firstRowY,
+		buttonWidth,
+		buttonHeight,
+		'左移',
 		{
-			backgroundColor: 'rgba(255, 255, 0, 1)',
+			backgroundColor: 'rgba(255, 255, 0, 0.8)',
 			textColor: 'rgb(0,0,0)',
-			fontSize: 20,
+			fontSize: Math.floor(baseSize * 0.45),
 			onClick: () => {
-				game.moveLeft();
+				game.moveBlockLeft();
 			}
 		}
 	);
 
-	// 添加下移按钮
-	buttonManager.addButton(
-		'down',
-		BlockSize + 50 * settings.scale * 2,
-		canvasHeight - BlockSize * 4,
-		100 * settings.scale,
-		50 * settings.scale,
-		'下',
-		{
-			backgroundColor: 'rgba(255, 255, 0, 1)',
-			textColor: 'rgb(0,0,0)',
-			fontSize: 20,
-			onClick: () => {
-				game.moveDown();
-			}
-		}
-	);
-
-	// 添加右移按钮
+	// 右移按钮（第一排右）
 	buttonManager.addButton(
 		'right',
-		BlockSize + 50 * settings.scale * 4,
-		canvasHeight - BlockSize * 8,
-		100 * settings.scale,
-		50 * settings.scale,
-		'右',
+		controlStartX + buttonWidth,
+		firstRowY,
+		buttonWidth,
+		buttonHeight,
+		'右移',
 		{
-			backgroundColor: 'rgba(255, 255, 0, 1)',
+			backgroundColor: 'rgba(255, 255, 0, 0.8)',
 			textColor: 'rgb(0,0,0)',
-			fontSize: 20,
+			fontSize: Math.floor(baseSize * 0.45),
 			onClick: () => {
-				game.moveRight();
+				game.moveBlockRight();
 			}
 		}
 	);
 
-	// 添加旋转按钮
+	// 下移按钮（第二排左）
+	buttonManager.addButton(
+		'down',
+		controlStartX,
+		secondRowY,
+		buttonWidth,
+		buttonHeight,
+		'下移',
+		{
+			backgroundColor: 'rgba(255, 255, 0, 0.8)',
+			textColor: 'rgb(246, 255, 0)',
+			fontSize: Math.floor(baseSize * 0.45),
+			onClick: () => {
+				game.moveBlockDown();
+			}
+		}
+	);
+
+	// 旋转按钮（第二排右）
 	buttonManager.addButton(
 		'rotate',
-		BlockSize * 4 + 50 * settings.scale * 6,
-		canvasHeight - BlockSize * 8,
-		100 * settings.scale,
-		50 * settings.scale,
+		controlStartX + buttonWidth*2 + horizontalSpacing,
+		secondRowY-buttonHeight,
+		buttonWidth,
+		buttonHeight*1.5,
 		'旋转',
 		{
 			backgroundColor: 'rgb(255, 0, 0)',
-			textColor: 'rgb(246, 255, 0)',
-			fontSize: 20,
-			isCircle: true,
+			textColor: 'rgb(0,0,0)',
+			fontSize: Math.floor(baseSize * 0.45),
 			onClick: () => {
-				game.rotate();
+				game.rotateBlock();
 			}
 		}
 	);
@@ -444,7 +461,8 @@ function drawBackground() {
 		context.fillStyle = 'rgba(0, 0, 0, 0.5)';
 		context.fillRect(0, 0, canvasWidth, canvasHeight);
 		
-		context.font = `bold ${36 * settings.scale}px Arial`;
+		const pauseTextSize = baseSize * 0.8;
+		context.font = `bold ${pauseTextSize}px Arial`;
 		context.fillStyle = '#FFFFFF';
 		context.textAlign = 'center';
 		context.textBaseline = 'middle';
@@ -453,35 +471,11 @@ function drawBackground() {
 	}
 }
 
-// 修改触摸事件处理函数
-function handleTouch(e) {
-	const touch = e.touches[0];
-	
-	// 检查是否点击了暂停按钮
-	const pauseButton = buttonManager.getButton('pause');
-	if (pauseButton && pauseButton.isClicked(touch)) {
-		game.togglePause();
-		// 更新按钮文字
-		pauseButton.text = game.isPaused ? '继续' : '暂停';
-		// 重绘背景
-		drawBackground();
-		return;
-	}
-
-	// 如果游戏暂停，不处理其他按钮点击
-	if (game.isPaused) {
-		return;
-	}
-
-	// 处理其他按钮点击
-	buttonManager.handleClick(touch);
-}
-
 function animateTreis() {
 	if (!game.gameOver && !game.isPaused) {
 		game.update()
 		game.render()
-	  }
+	}
 }
 
 export {animateTreis,InitTeris}
