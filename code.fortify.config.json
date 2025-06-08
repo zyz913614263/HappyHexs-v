@@ -1,0 +1,35 @@
+{
+  "plugin_protect": {
+    "name": "外挂防护",
+    "files": []
+  },
+  "watermark": {
+    "name": "水印保护",
+    "files": [
+      "gamelogic.js",
+      "entry/Block.js",
+      "entry/Hex.js",
+      "entry/music.js",
+      "entry/wavegen.js"
+    ]
+  },
+  "obfuscation": {
+    "name": "代码混淆",
+    "tasks": [
+      {
+        "level": 1,
+        "files": []
+      },
+      {
+        "level": 3,
+        "files": [
+          "gamelogic.js",
+          "entry/Block.js",
+          "entry/Hex.js",
+          "entry/music.js",
+          "entry/wavegen.js"
+        ]
+      }
+    ]
+  }
+}

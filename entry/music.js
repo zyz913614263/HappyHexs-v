@@ -1,3 +1,4 @@
+
 const tt = wx
 class AudioManager {
     constructor() {
@@ -235,3 +236,4 @@ class AudioManager {
 // 创建单例实例
 export const audioManager = new AudioManager();
 export const hasAudio = true;
+

@@ -1,3 +1,4 @@
+
 // 初始化游戏
 import './libs/weapp-adapter.js'
 import { settings, colors, randInt, drawPolygon } from './settings.js';
@@ -750,3 +751,4 @@ function floodFill(hex, side, index, deleting) {
 }
 
 export {gameinit}
+

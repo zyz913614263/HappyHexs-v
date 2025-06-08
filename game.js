@@ -5,5 +5,5 @@ wx.onShow(() => {
     console.log('游戏启动');
 });
 
+
 requestAnimationFrame(animLoop);
-gameinit()
