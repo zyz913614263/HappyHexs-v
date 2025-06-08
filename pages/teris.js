@@ -59,7 +59,7 @@ export class Game {
 		// 更新游戏状态
 		if (this.canBlockMove(this.block, 0, 1)) {
 			this.block.updateDown(this.speed)
-			this.gap = 20
+			this.gap = 30
 		} else if (this.gap > 0) {
 			this.gap --
 		} else {
@@ -126,15 +126,17 @@ export class Game {
 	}
 
 	moveBlockDown() {
-
-		for (let i = 20; i>0; i--) {
+		let maxIndex = 0
+		for (let i = 0; i<=20; i++) {
 			if (this.canBlockMove(this.block, 0, i)) {
-				this.block.moveDown(i)
+				maxIndex = i
 				//audioManager.move2();
+				//break;
+			}else{
 				break;
 			}
 		}
-		
+		this.block.moveDown(maxIndex)
 	}
 
 	rotateBlock() {
@@ -284,7 +286,15 @@ function touch(e) {
 		game.rotateBlock()
 		return;
 	}
-
+	if (checkTouch(clickX,clickY,wx.globalData.pauseButton)) {
+		if (game.isPaused) {
+			game.resume();
+		} else {
+			game.pause();
+		}
+		audioManager.move()
+		return;
+	}
 }
 
 // 创建按钮管理器实例
