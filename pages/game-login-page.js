@@ -1,15 +1,77 @@
 import { drawRoundRect } from '../comon.js';	
 import { settings } from '../settings.js';
+import { audioManager } from '../entry/music.js';
+import {Init as InitPopo } from './bubales.js'
+import{ InitTeris } from './teris.js'
 const tt = wx
-export function drawStartScreen(ctx,canvas) {
-	// 使用实际的画布尺寸
-	const canvasWidth = canvas.width / wx.globalData.currentPixelRatio;
-	const canvasHeight = canvas.height / wx.globalData.currentPixelRatio;
+let bubbleX, bubbleY,btnWidth,btnHeight;
+let terisX, terisY;
+let canvas, ctx;
+let step = 80
+
+export function touchPop(e) {
+	if (wx.globalData.gameState !== 0) return;
+
+	InitPopo(canvas,ctx)
+	wx.globalData.gameState = 3
+	wx.offTouchStart(touchPop);
+	audioManager.stopBGM();
 	
-	//console.log('画布尺寸:', canvasWidth, canvasHeight); // 调试信息
+}
+
+export function touchTeris(e) {
+	if (wx.globalData.gameState !== 0) return;
 	
-	// 清空画布
-	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+	InitTeris(canvas,ctx)
+	wx.globalData.gameState = 4
+	wx.offTouchStart(touchTeris);
+	audioManager.stopBGM();
+	
+}
+
+// 绘制按钮的通用函数
+function drawButton(ctx, x, y, width, height, text, color = '#FF6B6B', hoverColor = '#ee5253') {
+	ctx.save();
+	
+	// 绘制按钮背景
+	drawRoundRect(ctx, x - width/2, y - height/2, width, height, 10 * settings.scale);
+	
+	// 创建按钮渐变
+	const gradient = ctx.createLinearGradient(
+		x - width/2,
+		y - height/2,
+		x + width/2,
+		y + height/2
+	);
+	gradient.addColorStop(0, color);
+	gradient.addColorStop(1, hoverColor);
+	
+	ctx.fillStyle = gradient;
+	ctx.fill();
+
+	// 绘制按钮文字
+	ctx.font = `bold ${24 * settings.scale}px Arial`;
+	ctx.fillStyle = '#FFFFFF';
+	ctx.shadowColor = '#000000';
+	ctx.shadowBlur = 10;
+	ctx.textAlign = 'center';
+	ctx.textBaseline = 'middle';
+	ctx.fillText(text, x, y);
+	
+	ctx.restore();
+}
+
+export function drawStartScreen(c,ca) {
+	canvas = ca;
+	ctx = c;
+	const screenWidth = canvas.width / wx.globalData.currentPixelRatio;
+	const screenHeight = canvas.height / wx.globalData.currentPixelRatio;
+	const canvasWidth = screenWidth
+	const canvasHeight = screenHeight
+	// 清除画布
+	ctx.clearRect(0, 0, screenWidth, screenHeight);
+	ctx.fillStyle = '#ffffff';
+	ctx.fillRect(0, 0, screenWidth, screenHeight);
 	const innerGradient = ctx.createLinearGradient(-canvasWidth, -canvasHeight, canvasWidth, canvasHeight);
 	innerGradient.addColorStop(0, '#3498db');
 	innerGradient.addColorStop(1, '#2980b9');
@@ -135,36 +197,23 @@ export function drawStartScreen(ctx,canvas) {
 	ctx.shadowColor = '#000000';
 	ctx.shadowBlur = 4 * settings.scale;
 	ctx.fillText('开始', 0, 0);
-
-	// 恢复上下文状态
 	ctx.restore();
 
-	// 添加鼠标悬停效果
-	if (wx.globalData.mousePos) {
-		const dx = wx.globalData.mousePos.x - centerX;
-		const dy = wx.globalData.mousePos.y - centerY;
-		const distance = Math.sqrt(dx * dx + dy * dy);
-		
-		if (distance < outerRadius) {
-			ctx.save();
-			ctx.translate(centerX, centerY);
-			ctx.beginPath();
-			ctx.arc(0, 0, outerRadius, 0, Math.PI * 2);
-			ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-			ctx.fill();
-			ctx.restore();
-		}
-	}
-	// 首先绘制游戏标题
-   // 首先绘制游戏标题
-   const drawGameTitle = () => {
+	// 存储开始按钮位置信息
+	wx.globalData.startButton = {
+		x: centerX - btnWidth/2,
+		y: centerY - btnHeight/2,
+		width: btnWidth,
+		height: btnHeight
+	};
+
+	// 绘制游戏标题
+	const drawGameTitle = () => {
 		ctx.save();
-		
-		// 只有当图片已加载完成时才绘制
-		if (wx.globalData.gameLogo.complete) {
+		if (wx.globalData.gameLogo && wx.globalData.gameLogo.complete) {
 			const logoWidth = 450 * settings.scale;
 			const logoHeight = (logoWidth * wx.globalData.gameLogo.height) / wx.globalData.gameLogo.width;
-			const titleY = canvasHeight * 0.29;
+			const titleY = screenHeight * 0.25; // 调整标题位置更靠上
 			
 			ctx.drawImage(
 				wx.globalData.gameLogo,
@@ -174,116 +223,74 @@ export function drawStartScreen(ctx,canvas) {
 				logoHeight
 			);
 		}
-		
 		ctx.restore();
 	};
 
-    // 调用绘制标题函数
-    drawGameTitle();
-/*
-	// 绘制保存到我的小程序按钮 侧边栏
-    ctx.save();
-    const saveY = centerY + 380 * settings.scale;
-	const saveX = centerX -150*settings.scale;
-	const btnWidth = 100 * settings.scale;
-	const btnHeight = 80 * settings.scale;
-    // 绘制保存按钮背景
-    drawRoundRect(ctx, saveX - btnWidth/2, saveY - btnHeight/2, btnWidth, btnHeight, 10 * settings.scale);
-    
-    // 创建按钮渐变
-    const btnGradient = ctx.createLinearGradient(
-        saveX - btnWidth/2,
-        saveY - btnHeight/2,
-        saveX + btnWidth/2,
-        saveY + btnHeight/2
-    );
-    btnGradient.addColorStop(0, '#4CAF50');  // 绿色
-    btnGradient.addColorStop(1, '#45a049');  // 深绿色
-    
-    ctx.fillStyle = btnGradient;
-    ctx.fill();
+	// 绘制最高分
+	const drawHighScore = () => {
+		ctx.save();
+		ctx.font = `bold ${24 * settings.scale}px Arial`;
+		ctx.fillStyle = '#333333';
+		ctx.textAlign = 'center';
+		ctx.fillText(`历史最高分: ${wx.globalData.highScore}`, centerX, centerY + 220 * settings.scale);
+		ctx.restore();
+	};
 
-    // 绘制按钮文字
-    ctx.font = `bold ${20 * settings.scale}px Arial`;
-    ctx.fillStyle = '#FFFFFF';
-    ctx.shadowColor = '#000000';
-    ctx.shadowBlur = 10;
-	ctx.textAlign = 'center';
-    ctx.fillText('保存到我', saveX, saveY-5*settings.scale);
-	ctx.fillText('的小程序', saveX, saveY+25*settings.scale);
-    ctx.restore();
+	// 按顺序绘制各个元素
+	drawGameTitle();
+	drawHighScore();
 
-	 // 在保存到我的小程序按钮旁边添加新按钮
-    // 绘制添加到桌面按钮
-    ctx.save();
-    const addToDesktopY = centerY + 380 * settings.scale;
-    const addToDesktopX = centerX ; // 位置调整到右侧
+	// 按钮配置
+	const btnWidth = 120 * settings.scale;
+	const btnHeight = 60 * settings.scale;
+	const btnSpacing = 20 * settings.scale; // 按钮之间的间距
+	const bottomMargin = 200 * settings.scale; // 距离底部的距离
+	const totalButtons = 3; // 按钮总数
+	const totalWidth = (btnWidth * totalButtons) + (btnSpacing * (totalButtons - 1));
+	let startX = centerX - totalWidth/2 + btnWidth/2;
+	let startY = canvasHeight - bottomMargin;
+	// 绘制分享按钮
+	drawButton(ctx, startX, startY, btnWidth, btnHeight, '分享', '#3498db', '#2980b9');
+	wx.globalData.mainShareButton = {
+		x: startX - btnWidth/2,
+		y: startY - btnHeight/2,
+		width: btnWidth,
+		height: btnHeight
+	};
 
-    // 绘制添加到桌面按钮背景
-    drawRoundRect(ctx, addToDesktopX - btnWidth/2, addToDesktopY - btnHeight/2, btnWidth, btnHeight, 10 * settings.scale);
-    
+	// 绘制泡泡按钮
+	startX += btnWidth + btnSpacing;
+	drawButton(ctx, startX, startY, btnWidth, btnHeight, '泡泡', '#FF6B6B', '#ee5253');
+	wx.globalData.bubbleButton = {
+		x: startX - btnWidth/2,
+		y: startY - btnHeight/2,
+		width: btnWidth,
+		height: btnHeight
+	};
 
-    //btnGradient.addColorStop(0, '#FF6B6B');  // 红色
-    //btnGradient.addColorStop(1, '#ee5253');  // 深红色
-    
-    ctx.fillStyle = btnGradient;
-    ctx.fill();
-
-    // 绘制按钮文字
-    ctx.font = `bold ${20 * settings.scale}px Arial`;
-    ctx.fillStyle = '#FFFFFF';
-    ctx.shadowColor = '#000000';
-    ctx.shadowBlur = 10;
-    ctx.textAlign = 'center';
-    ctx.fillText('添加到', addToDesktopX, addToDesktopY-5*settings.scale);
-    ctx.fillText('桌面', addToDesktopX, addToDesktopY+25*settings.scale);
-    ctx.restore();
-
-	// 添加分享按钮
-    ctx.save();
-    const shareY = centerY + 380 * settings.scale;
-    const shareX = centerX +150 * settings.scale;
-	//const btnWidth = 100 * settings.scale;
-	//const btnHeight = 80 * settings.scale;
-    // 绘制分享按钮背景
-    drawRoundRect(ctx, shareX - btnWidth/2, shareY - btnHeight/2, btnWidth, btnHeight, 10 * settings.scale);
-    
-    // 创建按钮渐变
-    const shareGradient = ctx.createLinearGradient(
-        shareX - btnWidth/2,
-        shareY - btnHeight/2,
-        shareX + btnWidth/2,
-        shareY + btnHeight/2
-    );
-    shareGradient.addColorStop(0, '#4CAF50');
-    shareGradient.addColorStop(1, '#45a049');
-    
-    ctx.fillStyle = shareGradient;
-    ctx.fill();
-
-    // 绘制按钮文字
-    ctx.font = `bold ${20 * settings.scale}px Arial`;
-    ctx.fillStyle = '#FFFFFF';
-    ctx.shadowColor = '#000000';
-    ctx.shadowBlur = 10;
-    ctx.textAlign = 'center';
-    ctx.fillText('分享到', shareX, shareY - 5 * settings.scale);
-	ctx.fillText('抖音', shareX, shareY + 25 * settings.scale);
-    ctx.restore();*/
+	// 绘制方块按钮
+	startX += btnWidth + btnSpacing;
+	drawButton(ctx, startX, startY, btnWidth, btnHeight, '方块', '#4CAF50', '#45a049');
+	wx.globalData.terisButton = {
+		x: startX - btnWidth/2,
+		y: startY - btnHeight/2,
+		width: btnWidth,
+		height: btnHeight
+	};
 
 	// 添加底部提示文字
-    ctx.save();
-    const bottomY = canvas.height / wx.globalData.currentPixelRatio - 50 * settings.scale; // 距离底部20像素
-    ctx.font = `${12 * settings.scale}px Arial`;
-    ctx.fillStyle = '#FFFFFF'; // 使用灰色让文字不那么显眼
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'bottom';
-    
-    // 分两行显示文字
-    const line1 = '抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。';
-    const line2 = '适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。';
-    
-    ctx.fillText(line1, centerX, bottomY - 15 * settings.scale);
-    ctx.fillText(line2, centerX, bottomY);
-    ctx.restore();
+	ctx.save();
+	const bottomY = screenHeight - 50 * settings.scale; // 距离底部20像素
+	ctx.font = `${12 * settings.scale}px Arial`;
+	ctx.fillStyle = '#FFFFFF'; // 使用灰色让文字不那么显眼
+	ctx.textAlign = 'center';
+	ctx.textBaseline = 'bottom';
+	
+	// 分两行显示文字
+	const line1 = '抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。';
+	const line2 = '适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。';
+	
+	ctx.fillText(line1, centerX, bottomY - 15 * settings.scale);
+	ctx.fillText(line2, centerX, bottomY);
+	ctx.restore();
 }

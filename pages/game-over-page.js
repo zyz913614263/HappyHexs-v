@@ -59,35 +59,42 @@ function drawGameOver(ctx,canvas) {
     ctx.restore();
 	ctx.save();
     const btnWidth = 200 * settings.scale;
-    const btnHeight = 50 * settings.scale;
-    const btnY = centerY + 160 * settings.scale;
+    const btnHeight = 60 * settings.scale;
+    const btnY = centerY + 180 * settings.scale;
 
-    // 绘制按钮背景
-    ctx.beginPath();
-    drawRoundRect(ctx,
+    // 绘制分享按钮背景
+    drawRoundRect(ctx, centerX - btnWidth/2, btnY - btnHeight/2, btnWidth, btnHeight, 10 * settings.scale);
+    
+    // 创建按钮渐变
+    const btnGradient = ctx.createLinearGradient(
         centerX - btnWidth/2,
         btnY - btnHeight/2,
-        btnWidth,
-        btnHeight,
-        10 * settings.scale
+        centerX + btnWidth/2,
+        btnY + btnHeight/2
     );
+    btnGradient.addColorStop(0, '#4CAF50');
+    btnGradient.addColorStop(1, '#45a049');
     
-    ctx.fillStyle = "#00FF00";
+    ctx.fillStyle = btnGradient;
     ctx.fill();
 
-    // 添加按钮边框
-    //ctx.strokeStyle = '#E6E6FA';  // 淡紫色
-    //ctx.lineWidth = 2 * settings.scale;
-    //ctx.stroke();
-	
     // 绘制按钮文字
-    ctx.font = `bold ${20 * settings.scale}px Arial`;
+    ctx.font = `bold ${24 * settings.scale}px Arial`;
     ctx.fillStyle = '#FFFFFF';
     ctx.shadowColor = '#000000';
     ctx.shadowBlur = 10;
-	ctx.textAlign = 'center';
+    ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('点击屏幕重新开始', centerX, btnY);
+    ctx.fillText('分享战绩', centerX, btnY);
+    
+    // 存储分享按钮位置信息
+    wx.globalData.shareButton = {
+        x: centerX - btnWidth/2,
+        y: btnY - btnHeight/2,
+        width: btnWidth,
+        height: btnHeight
+    };
+    
     ctx.restore();
 
     // 添加装饰性元素
