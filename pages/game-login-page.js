@@ -248,32 +248,32 @@ export function drawStartScreen(c,ca) {
 	const totalButtons = 3; // 按钮总数
 	const totalWidth = (btnWidth * totalButtons) + (btnSpacing * (totalButtons - 1));
 	let startX = centerX - totalWidth/2 + btnWidth/2;
-
+	let startY = canvasHeight - bottomMargin;
 	// 绘制分享按钮
-	drawButton(ctx, startX, canvasHeight - bottomMargin, btnWidth, btnHeight, '分享', '#3498db', '#2980b9');
+	drawButton(ctx, startX, startY, btnWidth, btnHeight, '分享', '#3498db', '#2980b9');
 	wx.globalData.mainShareButton = {
 		x: startX - btnWidth/2,
-		y: canvasHeight - bottomMargin - btnHeight/2,
+		y: startY - btnHeight/2,
 		width: btnWidth,
 		height: btnHeight
 	};
 
 	// 绘制泡泡按钮
 	startX += btnWidth + btnSpacing;
-	drawButton(ctx, startX, canvasHeight - bottomMargin, btnWidth, btnHeight, '泡泡', '#FF6B6B', '#ee5253');
+	drawButton(ctx, startX, startY, btnWidth, btnHeight, '泡泡', '#FF6B6B', '#ee5253');
 	wx.globalData.bubbleButton = {
 		x: startX - btnWidth/2,
-		y: canvasHeight - bottomMargin - btnHeight/2,
+		y: startY - btnHeight/2,
 		width: btnWidth,
 		height: btnHeight
 	};
 
 	// 绘制方块按钮
 	startX += btnWidth + btnSpacing;
-	drawButton(ctx, startX, canvasHeight - bottomMargin, btnWidth, btnHeight, '方块', '#4CAF50', '#45a049');
+	drawButton(ctx, startX, startY, btnWidth, btnHeight, '方块', '#4CAF50', '#45a049');
 	wx.globalData.terisButton = {
 		x: startX - btnWidth/2,
-		y: canvasHeight - bottomMargin - btnHeight/2,
+		y: startY - btnHeight/2,
 		width: btnWidth,
 		height: btnHeight
 	};

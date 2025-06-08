@@ -748,37 +748,4 @@ function floodFill(hex, side, index, deleting) {
     }
 }
 
-// 处理主界面分享按钮点击
-function handleMainPageShare(e) {
-    const touch = e.touches[0];
-    const mainShareButton = wx.globalData.mainShareButton;
-    
-    if (mainShareButton && 
-        touch.clientX >= mainShareButton.x && 
-        touch.clientX <= mainShareButton.x + mainShareButton.width &&
-        touch.clientY >= mainShareButton.y && 
-        touch.clientY <= mainShareButton.y + mainShareButton.height) {
-        // 分享游戏
-        wx.shareAppMessage({
-            title: '快乐六边形 - 考验反应力的休闲小游戏',
-            desc: '快来和我一起玩快乐六边形吧！',
-            imageUrl: 'res/images/share.png', // 确保这个图片存在
-            success: function() {
-                wx.showToast({
-                    title: '分享成功',
-                    icon: 'success',
-                    duration: 2000
-                });
-            },
-            fail: function() {
-                wx.showToast({
-                    title: '分享失败',
-                    icon: 'none',
-                    duration: 2000
-                });
-            }
-        });
-    }
-}
-
 export {gameinit}
