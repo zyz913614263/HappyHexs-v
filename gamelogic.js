@@ -319,6 +319,7 @@ function setStartScreen() {
         
         // 检查是否点击了分享按钮
         if (isButtonClicked(touch, wx.globalData.mainShareButton)) {
+			if (wx.globalData.gameState !== 0) return;
             // 分享游戏
             wx.shareAppMessage({
                 title: '快乐六边形 - 考验反应力的休闲小游戏',

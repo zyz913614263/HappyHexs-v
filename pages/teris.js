@@ -2,6 +2,8 @@ import { settings } from "../settings";
 import { Block } from './teris/block'
 import { Matrix } from './teris/matrix'
 import { audioManager } from '../entry/music'
+import { drawCircle } from '../comon.js';
+import { Button, ButtonManager } from '../comon.js';
 
 let canvas, context;
 let game = Game;
@@ -285,125 +287,185 @@ function touch(e) {
 
 }
 
-
+// 创建按钮管理器实例
+const buttonManager = new ButtonManager();
 
 function drawBackground() {
 	const canvasWidth = context.canvas.width / wx.globalData.currentPixelRatio;
 	const canvasHeight = context.canvas.height / wx.globalData.currentPixelRatio;
 	
-	//console.log('画布尺寸:', canvasWidth, canvasHeight); // 调试信息
-	
-	// 清空画布
-	//ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-	//const innerGradient = ctx.createLinearGradient(-canvasWidth, -canvasHeight, canvasWidth, canvasHeight);
-	//innerGradient.addColorStop(0, '#3498db');
-	//innerGradient.addColorStop(1, '#2980b9');
+	context.fillStyle = 'rgb(44, 93, 93)';
+	context.fillRect(0, 0, canvas.width, canvas.height);
 
-	// 绘制半透明背景
-	//ctx.fillStyle = innerGradient//'rgba(0, 0, 0, 0.5)';
-	//ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+	// 初始化所有按钮
+	buttonManager.clear();
 
-  	context.fillStyle ='rgb(44, 93, 93)';
-  	context.fillRect(0, 0, canvas.width, canvas.height);
+	// 添加返回按钮
+	buttonManager.addButton(
+		'return',
+		20,
+		20,
+		100 * settings.scale,
+		50 * settings.scale,
+		'返回',
+		{
+			backgroundColor: 'rgba(190, 243, 187, 0)',
+			textColor: '#bdc3c7',
+			fontSize: 20,
+			onClick: () => {
+				wx.globalData.gameState = 999;
+			}
+		}
+	);
 
-	// 绘制返回按钮
-	const btnWidth = 100 * settings.scale;
-	const btnHeight = 50 * settings.scale;
-	const btnX = 20; // 按钮左上角 X 坐标
-	const btnY = 20; // 按钮左上角 Y 坐标
-	
-	context.save();
-	context.fillStyle = 'rgba(190, 243, 187, 0)'; // 按钮背景颜色
-	context.fillRect(btnX, btnY, btnWidth, btnHeight);
-	
-	context.font = '20px Arial';
-	context.fillStyle = '#bdc3c7'; // 按钮文字颜色
-	context.textAlign = 'center';
-	context.textBaseline = 'middle';
-	context.fillText('返回', btnX + btnWidth / 2, btnY + btnHeight / 2);
-	context.restore();
-	
-	// 将按钮位置存储到全局变量，供触摸事件使用
-	wx.globalData.returnButton = { x: btnX, y: btnY, width: btnWidth, height: btnHeight };
+	// 添加暂停按钮
+	buttonManager.addButton(
+		'pause',
+		canvasWidth - 120 * settings.scale,
+		60 * settings.scale,
+		100 * settings.scale,
+		50 * settings.scale,
+		game.isPaused ? '继续' : '暂停',
+		{
+			backgroundColor: 'rgba(255, 165, 0, 0.8)',
+			hoverColor: 'rgba(255, 140, 0, 0.8)',
+			textColor: '#FFFFFF',
+			fontSize: 20,
+			onClick: () => {
+				game.togglePause();
+				// 更新按钮文字
+				const pauseButton = buttonManager.getButton('pause');
+				if (pauseButton) {
+					pauseButton.text = game.isPaused ? '继续' : '暂停';
+				}
+			}
+		}
+	);
 
-	// 绘制返回按钮
-	
-	const btnLeftX = BlockSize*1; // 按钮左上角 X 坐标
-	const btnLeftY = canvasHeight-BlockSize*8; // 按钮左上角 Y 坐标
-	
-	context.save();
-	context.fillStyle = 'rgba(255, 255, 0, 1)'; // 按钮背景颜色
-	context.fillRect(btnLeftX, btnLeftY, btnWidth, btnHeight);
-	
-	context.font = '20px Arial';
-	context.fillStyle = 'rgb(0,0,0)'; // 按钮文字颜色
-	context.textAlign = 'center';
-	context.textBaseline = 'middle';
-	context.fillText('左', btnLeftX + btnWidth / 2, btnLeftY + btnHeight / 2);
-	context.restore();
-	
-	// 将按钮位置存储到全局变量，供触摸事件使用
-	wx.globalData.leftButton = { x: btnLeftX, y: btnLeftY, width: btnWidth, height: btnHeight };
+	// 添加左移按钮
+	buttonManager.addButton(
+		'left',
+		BlockSize * 1,
+		canvasHeight - BlockSize * 8,
+		100 * settings.scale,
+		50 * settings.scale,
+		'左',
+		{
+			backgroundColor: 'rgba(255, 255, 0, 1)',
+			textColor: 'rgb(0,0,0)',
+			fontSize: 20,
+			onClick: () => {
+				game.moveLeft();
+			}
+		}
+	);
 
-	context.save();
-	const btnDownX = BlockSize+btnHeight*2; // 按钮左上角 X 坐标
-	const btnDownY = canvasHeight-BlockSize*4; // 按钮左上角 Y 坐标
-	context.fillStyle = 'rgba(255, 255, 0, 1)'; // 按钮背景颜色
-	context.fillRect(btnDownX, btnDownY, btnWidth, btnHeight);
-	
-	context.font = '20px Arial';
-	context.fillStyle = 'rgb(0,0,0)'; // 按钮文字颜色
-	context.textAlign = 'center';
-	context.textBaseline = 'middle';
-	context.fillText('下', btnDownX + btnWidth / 2, btnDownY + btnHeight / 2);
-	context.restore();
-	
-	// 将按钮位置存储到全局变量，供触摸事件使用
-	wx.globalData.downButton = { x: btnDownX, y: btnDownY, width: btnWidth, height: btnHeight };
+	// 添加下移按钮
+	buttonManager.addButton(
+		'down',
+		BlockSize + 50 * settings.scale * 2,
+		canvasHeight - BlockSize * 4,
+		100 * settings.scale,
+		50 * settings.scale,
+		'下',
+		{
+			backgroundColor: 'rgba(255, 255, 0, 1)',
+			textColor: 'rgb(0,0,0)',
+			fontSize: 20,
+			onClick: () => {
+				game.moveDown();
+			}
+		}
+	);
 
-	context.save();
-	const btnRightX = BlockSize+btnHeight*4; // 按钮左上角 X 坐标
-	const btnRightY = canvasHeight-BlockSize*8; // 按钮左上角 Y 坐标
-	context.fillStyle = 'rgba(255, 255, 0, 1)'; // 按钮背景颜色
-	context.fillRect(btnRightX, btnRightY, btnWidth, btnHeight);
-	
-	context.font = '20px Arial';
-	context.fillStyle = 'rgb(0,0,0)'; // 按钮文字颜色
-	context.textAlign = 'center';
-	context.textBaseline = 'middle';
-	context.fillText('右', btnRightX + btnWidth / 2, btnRightY + btnHeight / 2);
-	context.restore();
-	
-	// 将按钮位置存储到全局变量，供触摸事件使用
-	wx.globalData.rightButton = { x: btnRightX, y: btnRightY, width: btnWidth, height: btnHeight };
-	
-	context.save();
-	const btnRotateX = BlockSize*4+btnHeight*6; // 按钮左上角 X 坐标
-	const btnRotateY = canvasHeight-BlockSize*8; // 按钮左上角 Y 坐标
-	drawCircle(context,btnRotateX+BlockSize,btnRotateY+BlockSize,btnWidth/2,'rgb(255, 0, 0)');
-	
-	context.font = '20px Arial';
-	context.fillStyle = 'rgb(246, 255, 0)'; // 按钮文字颜色
-	context.textAlign = 'center';
-	context.textBaseline = 'middle';
-	context.fillText('旋转', btnRotateX + btnWidth / 3, btnRotateY + btnHeight / 2);
-	context.restore();
-	
-	// 将按钮位置存储到全局变量，供触摸事件使用
-	wx.globalData.rotateButton = { x: btnRotateX, y: btnRotateY, width: btnWidth, height: btnHeight };
+	// 添加右移按钮
+	buttonManager.addButton(
+		'right',
+		BlockSize + 50 * settings.scale * 4,
+		canvasHeight - BlockSize * 8,
+		100 * settings.scale,
+		50 * settings.scale,
+		'右',
+		{
+			backgroundColor: 'rgba(255, 255, 0, 1)',
+			textColor: 'rgb(0,0,0)',
+			fontSize: 20,
+			onClick: () => {
+				game.moveRight();
+			}
+		}
+	);
+
+	// 添加旋转按钮
+	buttonManager.addButton(
+		'rotate',
+		BlockSize * 4 + 50 * settings.scale * 6,
+		canvasHeight - BlockSize * 8,
+		100 * settings.scale,
+		50 * settings.scale,
+		'旋转',
+		{
+			backgroundColor: 'rgb(255, 0, 0)',
+			textColor: 'rgb(246, 255, 0)',
+			fontSize: 20,
+			isCircle: true,
+			onClick: () => {
+				game.rotate();
+			}
+		}
+	);
+
+	// 绘制所有按钮
+	buttonManager.drawAll(context);
+
+	// 存储按钮位置信息到全局变量
+	buttonManager.buttons.forEach((button, id) => {
+		wx.globalData[`${id}Button`] = {
+			x: button.x,
+			y: button.y,
+			width: button.width,
+			height: button.height
+		};
+	});
+
+	// 如果游戏暂停，绘制暂停提示
+	if (game.isPaused) {
+		context.save();
+		context.fillStyle = 'rgba(0, 0, 0, 0.5)';
+		context.fillRect(0, 0, canvasWidth, canvasHeight);
+		
+		context.font = `bold ${36 * settings.scale}px Arial`;
+		context.fillStyle = '#FFFFFF';
+		context.textAlign = 'center';
+		context.textBaseline = 'middle';
+		context.fillText('游戏暂停', canvasWidth / 2, canvasHeight / 2);
+		context.restore();
+	}
 }
 
-// 基本画圆方法
-function drawCircle(ctx, x, y, radius, color) {
-    ctx.save();
-	ctx.beginPath();  // 开始一个新的路径
-    ctx.arc(x, y, radius, 0, Math.PI * 2);  // 画一个完整的圆
-    ctx.fillStyle = color;  // 设置填充颜色
-    ctx.fill();  // 填充圆
-    ctx.closePath();  // 关闭路径
-	ctx.restore();
-}
+// 修改触摸事件处理函数
+function handleTouch(e) {
+	const touch = e.touches[0];
+	
+	// 检查是否点击了暂停按钮
+	const pauseButton = buttonManager.getButton('pause');
+	if (pauseButton && pauseButton.isClicked(touch)) {
+		game.togglePause();
+		// 更新按钮文字
+		pauseButton.text = game.isPaused ? '继续' : '暂停';
+		// 重绘背景
+		drawBackground();
+		return;
+	}
 
+	// 如果游戏暂停，不处理其他按钮点击
+	if (game.isPaused) {
+		return;
+	}
+
+	// 处理其他按钮点击
+	buttonManager.handleClick(touch);
+}
 
 function animateTreis() {
 	if (!game.gameOver && !game.isPaused) {
