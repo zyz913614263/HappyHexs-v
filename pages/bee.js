@@ -20,11 +20,12 @@ class PlayerShip {
 		this.width = baseSize * 4;  // 战机宽度为基础尺寸的2倍
 		this.height = baseSize * 3;  // 战机高度为基础尺寸的1.5倍
 		this.x = screenWidth / 2;
-		this.y = screenHeight - this.height - baseSize;  // 距离底部一个基础尺寸
+		this.y = screenHeight - this.height - 2* baseSize;  // 距离底部一个基础尺寸
 		this.speed = baseSize * 0.5;  // 速度为基础尺寸的一半
 		this.bullet = null;
 		this.lives = 1;
 		this.score = 0;
+		this.maxScore = 0;
 	}
 
 	move(direction) {
@@ -310,7 +311,7 @@ class BeeGame {
 		this.ctx.fillStyle = 'rgba(179, 191, 6, 0.8)';
 		this.ctx.fillText(`关卡: ${this.level}`, 220 * settings.scale, 130 * settings.scale);
 		this.ctx.fillStyle = 'rgba(191, 68, 6, 0.8)';
-		this.ctx.fillText(`生命: ${this.player.lives}`, 420 * settings.scale, 130 * settings.scale);
+		this.ctx.fillText(`最高分: ${this.player.maxScore}`, 360 * settings.scale, 130 * settings.scale);
 
 		// 绘制所有按钮
 		buttonManager.drawAll(this.ctx);
@@ -326,6 +327,7 @@ class BeeGame {
 				this.handleRestart()
 			}
 		})
+		this.saveGameState()
 	}
 
 	handleInput(direction) {
@@ -343,6 +345,8 @@ class BeeGame {
 	handleRestart() {
 		if (this.gameState === GAME_STATE.GAME_OVER) {
 			this.player = new PlayerShip(this.canvas);
+			this.loadGameState()
+			//this.player.maxScore = this.player.maxScore
 			this.enemies = [];
 			this.gameState = GAME_STATE.PLAYING;
 			this.level = 1;
@@ -350,12 +354,38 @@ class BeeGame {
 			this.lastDirection = 1;
 		}
 	}
+	saveGameState() {
+		if (this.player.score > this.player.maxScore) {
+			this.player.maxScore = this.player.score
+		}
+		wx.setStorage({
+			key: 'bee_state',
+			data: {
+				maxScore: this.player.maxScore,
+			}
+		})
+	}
+
+	loadGameState() {
+		wx.getStorage({
+		key: 'bee_state',
+		success: (res) => {
+			const { maxScore } = res.data
+			if (maxScore!=null && maxScore!=undefined) {
+				this.player.maxScore = maxScore
+			}
+		}
+		})
+	}
+
 }
 
 // 初始化游戏
 export function InitBee(canvas, ctx) {
 	audioManager.start2();
 	game = new BeeGame(canvas, ctx);
+	game.loadGameState()
+	game.player.maxScore = game.player.maxScore
 	console.log('InitBee',canvas.height,ctx)
 	wx.onTouchStart(handleTouch);
 	buttonManager = new ButtonManager();
