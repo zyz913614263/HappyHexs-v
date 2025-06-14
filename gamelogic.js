@@ -9,10 +9,11 @@ import { audioManager } from './entry/music.js';
 import { getHighScore, saveHighScore } from './storage/localstorage.js';
 import {drawRoundRect,renderText,Text} from './comon.js';
 import { drawGameOver } from './pages/game-over-page.js';
-import { drawStartScreen,touchPop, touchTeris } from './pages/game-login-page.js';
+import { drawStartScreen,touchPop, touchTeris,touchBee } from './pages/game-login-page.js';
 import { render } from './pages/game-run-page.js';
 import { animate } from './pages/bubales.js';
 import { animateTreis } from './pages/teris.js';
+import { animateBee } from './pages/bee.js';
 const tt = wx
 console.log('game.js 导入的 settings:', settings,settings.blockHeight);
 //初始化
@@ -221,6 +222,9 @@ export function animLoop() {
 		//requestAnimationFrame(animLoop);
 		animateTreis();
 		break;
+	case 5: //小蜜蜂
+		animateBee();
+		break;
 	case 999: //返回主界面
 		//requestAnimationFrame(animLoop);
 		wx.globalData.gameState = 0;
@@ -355,6 +359,12 @@ function setStartScreen() {
             touchTeris(e);
             return;
         }
+		//console.log('touchBee',wx.globalData.beeButton)
+		// 检查是否点击了小蜜蜂按钮
+		if (isButtonClicked(touch, wx.globalData.beeButton)) {
+			touchBee(e);
+			return;
+		}
     }
     
     // 注册触摸事件
