@@ -4,6 +4,7 @@ import { audioManager } from '../entry/music.js';
 import {Init as InitPopo } from './bubales.js'
 import{ InitTeris } from './teris.js'
 import{ InitBee } from './bee.js'
+import{ InitPlane } from './plane.js'
 const tt = wx
 let bubbleX, bubbleY,btnWidth,btnHeight;
 let terisX, terisY;
@@ -39,6 +40,18 @@ export function touchBee(e) {
 	audioManager.stopBGM();
 	
 }
+
+export function touchPlane(e) {
+	if (wx.globalData.gameState !== 0) return;
+	audioManager.stopBGM();
+	//console.log('touchBee')
+	InitPlane(canvas,ctx)
+	wx.globalData.gameState = 6
+	wx.offTouchStart(touchPlane);
+
+	
+}
+
 
 // 绘制按钮的通用函数
 function drawButton(ctx, x, y, width, height, text, color = '#FF6B6B', hoverColor = '#ee5253') {
@@ -252,11 +265,11 @@ export function drawStartScreen(c,ca) {
 	drawHighScore();
 
 	// 按钮配置
-	const btnWidth = 120 * settings.scale;
+	const btnWidth = 80 * settings.scale;
 	const btnHeight = 60 * settings.scale;
 	const btnSpacing = 20 * settings.scale; // 按钮之间的间距
 	const bottomMargin = 200 * settings.scale; // 距离底部的距离
-	const totalButtons = 4; // 按钮总数
+	const totalButtons = 5; // 按钮总数
 	const totalWidth = (btnWidth * totalButtons) + (btnSpacing * (totalButtons - 1));
 	let startX = centerX - totalWidth/2 + btnWidth/2;
 	let startY = canvasHeight - bottomMargin;
@@ -293,6 +306,16 @@ export function drawStartScreen(c,ca) {
 	startX += btnWidth + btnSpacing;
 	drawButton(ctx, startX, startY, btnWidth, btnHeight, '小蜜蜂', '#4CAF50', '#45a049');
 	wx.globalData.beeButton = {
+		x: startX - btnWidth/2,
+		y: startY - btnHeight/2,
+		width: btnWidth,
+		height: btnHeight
+	};
+
+	// 绘制飞机按钮
+	startX += btnWidth + btnSpacing;
+	drawButton(ctx, startX, startY, btnWidth, btnHeight, '飞机', '#4CAF50', '#45a049');
+	wx.globalData.planeButton = {
 		x: startX - btnWidth/2,
 		y: startY - btnHeight/2,
 		width: btnWidth,

@@ -64,6 +64,9 @@ class AudioManager {
 				move2: this.createAudioContext('res/music/teris.mp3'),
 				gameover2: this.createAudioContext('res/music/teris.mp3'),
 				start2: this.createAudioContext('res/music/teris.mp3'),
+				bgm:this.createAudioContext('res/music/bgm.mp3',true),
+				boom:this.createAudioContext('res/music/boom.mp3'),
+				bullet:this.createAudioContext('res/music/bullet.mp3'),
 	
 				//perfect: this.createAudioContext('./music/perfect.mp3'),
 			};
@@ -84,6 +87,17 @@ class AudioManager {
         if (!wx.globalData.musicEnabled) return;
 		this.setVolume('bgm', 0.35); 
         this.bgmContext.play();
+    }
+	play(type) {
+        if (!wx.globalData.musicEnabled) return;
+		const context = this.audioContexts[type];
+        if (!context) return;
+        context.play();
+    }
+	stop(type) {
+        const context = this.audioContexts[type];
+        if (!context) return;
+        context.stop();
     }
 
     // 停止背景音乐
