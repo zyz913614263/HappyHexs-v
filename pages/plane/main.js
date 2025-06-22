@@ -57,33 +57,37 @@ export default class Main {
   collisionDetection() {
     // 检测子弹与敌机的碰撞
     GameGlobal.databus.bullets.forEach((bullet) => {
-      for (let i = 0, il = GameGlobal.databus.enemys.length; i < il; i++) {
-        const enemy = GameGlobal.databus.enemys[i];
+		for (let i = 0, il = GameGlobal.databus.enemys.length; i < il; i++) {
+			const enemy = GameGlobal.databus.enemys[i];
 
-        // 如果敌机存活并且发生了发生碰撞
-        if (enemy.isCollideWith(bullet)) {
-          enemy.destroy(); // 销毁敌机
-          bullet.destroy(); // 销毁子弹
-          GameGlobal.databus.score += 1; // 增加分数
-		  if(GameGlobal.databus.score % 10 === 0) {
-			this.player.updateLevel();
-		  }
-          break; // 退出循环
-        }
-      }
+			// 如果敌机存活并且发生了发生碰撞
+			if (enemy.isCollideWith(bullet)) {
+				enemy.destroy(); // 销毁敌机
+				bullet.destroy(); // 销毁子弹
+				GameGlobal.databus.score += 1; // 增加分数
+				if(GameGlobal.databus.score % 10 === 0) {
+						this.player.updateLevel();
+						if (GameGlobal.databus.score > GameGlobal.databus.maxScore) {
+							GameGlobal.databus.maxScore = GameGlobal.databus.score;
+							GameGlobal.databus.saveGameState();
+						}
+				}
+				break; // 退出循环
+			}
+		}
     });
 
     // 检测玩家与敌机的碰撞
     for (let i = 0, il = GameGlobal.databus.enemys.length; i < il; i++) {
-      const enemy = GameGlobal.databus.enemys[i];
+		const enemy = GameGlobal.databus.enemys[i];
 
-      // 如果玩家与敌机发生碰撞
-      if (this.player.isCollideWith(enemy)) {
-        this.player.destroy(); // 销毁玩家飞机
-        GameGlobal.databus.gameOver(); // 游戏结束
+		// 如果玩家与敌机发生碰撞
+		if (this.player.isCollideWith(enemy)) {
+			this.player.destroy(); // 销毁玩家飞机
+			GameGlobal.databus.gameOver(); // 游戏结束
 
-        break; // 退出循环
-      }
+			break; // 退出循环
+		}
     }
   }
 

@@ -106,7 +106,7 @@ export function handleTouch(e) {
 
 	// 根据触摸位置判断移动方向
 	//位于player的左侧
-	if (x < canvasWidth/2) {
+	/*if (x < canvasWidth/2) {
 		//console.log('left')
 		game.player.move('left');
 		audioManager.move();
@@ -115,5 +115,5 @@ export function handleTouch(e) {
 		//console.log('right')
 		game.player.move('right');
 		audioManager.move();
-	} 
+	}*/ 
 }

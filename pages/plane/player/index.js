@@ -20,6 +20,7 @@ export default class Player extends Animation {
     // 初始化事件监听
     this.initEvent();
 	this.level = 1;
+	this.levelDown = 600 //每10秒下降1级
   }
 
   init() {
@@ -32,6 +33,7 @@ export default class Player extends Animation {
 
     this.isActive = true;
     this.visible = true;
+	this.level = 1;
 
     // 设置爆炸动画
     this.initExplosionAnimation();
@@ -73,13 +75,16 @@ export default class Player extends Animation {
       0,
       Math.min(x - this.width / 2, SCREEN_WIDTH - this.width)
     );
-    const disY = Math.max(
-      0,
-      Math.min(y - this.height / 2, SCREEN_HEIGHT - this.height)
-    );
+
 
     this.x = disX;
-    this.y = disY;
+	if (y != 0) {
+		const disY = Math.max(
+			0,
+			Math.min(y - this.height / 2, SCREEN_HEIGHT - this.height)
+		);
+		this.y = disY;
+	}
   }
 
   move(direction) {
@@ -102,7 +107,7 @@ export default class Player extends Animation {
    * 改变战机的位置
    */
   initEvent() {
-   /* wx.onTouchStart((e) => {
+    wx.onTouchStart((e) => {
       const { clientX: x, clientY: y } = e.touches[0];
 
       if (GameGlobal.databus.isGameOver) {
@@ -121,7 +126,8 @@ export default class Player extends Animation {
         return;
       }
       if (this.touched) {
-        this.setAirPosAcrossFingerPosZ(x, y);
+		
+        this.setAirPosAcrossFingerPosZ(x, 0);
       }
     });
 
@@ -131,7 +137,7 @@ export default class Player extends Animation {
 
     wx.onTouchCancel((e) => {
       this.touched = false;
-    });*/
+    });
   }
 
   /**
@@ -147,9 +153,33 @@ export default class Player extends Animation {
 
   updateLevel() {
     this.level++;
-	if (this.level > 5) {
-		this.level = 1;
+	if (this.level >= 5) {
+		this.level = 5;
 	}
+  }
+
+  /**
+   * 根据等级计算子弹位置
+   * @param {Number} level - 玩家等级
+   * @returns {Array} 子弹位置数组
+   */
+  calculateBulletPositions(level) {
+    const positions = [];
+    const maxBullets = 5;
+    const bulletCount = Math.min(level, maxBullets);
+    
+    if (bulletCount === 1) {
+      // 单发子弹，从飞机中心发射
+      positions.push(this.x + this.width / 2);
+    } else {
+      // 多发子弹，均匀分布在飞机宽度范围内
+      const spacing = this.width / (bulletCount - 1);
+      for (let i = 0; i < bulletCount; i++) {
+        positions.push(this.x + i * spacing);
+      }
+    }
+    
+    return positions;
   }
 
   update() {
@@ -160,27 +190,19 @@ export default class Player extends Animation {
     // 每20帧让玩家射击一次
     if (GameGlobal.databus.frame % PLAYER_SHOOT_INTERVAL === 0) {
 		audioManager.play('bullet'); // 播放射击音效
-		if (this.level === 1) {
-			this.shoot(this.x + this.width / 2); // 玩家射击
-		} else if (this.level === 2) {
-			this.shoot(this.x + 20); // 玩家射击
-			this.shoot(this.x +this.width- 20); // 玩家射击
-		} else if (this.level === 3) {
-			this.shoot(this.x + 20); // 玩家射击
-			this.shoot(this.x + this.width / 2); // 玩家射击
-			this.shoot(this.x +this.width- 20); // 玩家射击
-		}else if (this.level === 4) {
-			this.shoot(this.x); // 玩家射击
-			this.shoot(this.x + 20); // 玩家射击
-			this.shoot(this.x + this.width / 2); // 玩家射击
-			this.shoot(this.x +this.width- 20); // 玩家射击
-			this.shoot(this.x +this.width); // 玩家射击
-		}else if (this.level === 5) {
-			for (let i = 0; i < SCREEN_WIDTH; i += 20) {
-				this.shoot(i); // 玩家射击
-			}
-		}
+		
+		// 根据等级计算子弹位置并发射
+		const bulletPositions = this.calculateBulletPositions(this.level);
+		bulletPositions.forEach(position => {
+			this.shoot(position);
+		});
     }
+	if (GameGlobal.databus.frame % this.levelDown === 0) {
+		this.level--;
+		if (this.level < 1) {
+			this.level = 1;
+		}
+	}
   }
 
   destroy() {
