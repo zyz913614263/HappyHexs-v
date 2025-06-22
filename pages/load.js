@@ -13,7 +13,7 @@ GameGlobal.databus = new loadDataBus();
 
 export default class Load {
 	constructor(canvas, ctx1) {
-		this.bg = new CommonBackGround('res/images/bg_lu.jpg',1472,2616);
+		this.bg = new CommonBackGround('res/images/bg_lu.jpg',848,1536);
 		this.player = new LoadPlayer();
 	}
 

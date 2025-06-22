@@ -1,4 +1,5 @@
 import Sprite from '../base/sprite';
+import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../render.js';
 
 const BULLET_IMG_SRC = 'res/images/bullet.png';
 const BULLET_WIDTH = 16;
@@ -25,9 +26,16 @@ export default class Bullet extends Sprite {
     }
   
     this.y -= this.speed;
-	this.scale = this.y/ this.startY*1.5;
+	this.scale = this.y/ this.startY;
+	//x 往中间靠拢
+	if (this.x > SCREEN_WIDTH/2) {
+		this.x -= 2.5;
+	} else if (this.x < SCREEN_WIDTH/2) {
+		this.x += 2.5;
+	}
+
     // 超出屏幕外销毁
-    if (this.y < 0 ) {
+    if (this.y < 0) {
       	this.destroy();
     }
   }
