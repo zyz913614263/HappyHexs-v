@@ -52,7 +52,6 @@ export function touchPlane(e) {
 	
 }
 
-
 // 绘制按钮的通用函数
 function drawButton(ctx, x, y, width, height, text, color = '#FF6B6B', hoverColor = '#ee5253') {
 	ctx.save();
@@ -74,7 +73,7 @@ function drawButton(ctx, x, y, width, height, text, color = '#FF6B6B', hoverColo
 	ctx.fill();
 
 	// 绘制按钮文字
-	ctx.font = `bold ${24 * settings.scale}px Arial`;
+	ctx.font = `bold ${22 * settings.scale}px Arial`;
 	ctx.fillStyle = '#FFFFFF';
 	ctx.shadowColor = '#000000';
 	ctx.shadowBlur = 10;
@@ -265,7 +264,7 @@ export function drawStartScreen(c,ca) {
 	drawHighScore();
 
 	// 按钮配置
-	const btnWidth = 80 * settings.scale;
+	const btnWidth = 85* settings.scale;
 	const btnHeight = 60 * settings.scale;
 	const btnSpacing = 20 * settings.scale; // 按钮之间的间距
 	const bottomMargin = 200 * settings.scale; // 距离底部的距离
@@ -284,7 +283,7 @@ export function drawStartScreen(c,ca) {
 
 	// 绘制泡泡按钮
 	startX += btnWidth + btnSpacing;
-	drawButton(ctx, startX, startY, btnWidth, btnHeight, '泡泡', '#FF6B6B', '#ee5253');
+	drawButton(ctx, startX, startY, btnWidth, btnHeight, '泡泡','#4CAF50', '#45a049');
 	wx.globalData.bubbleButton = {
 		x: startX - btnWidth/2,
 		y: startY - btnHeight/2,
@@ -321,7 +320,19 @@ export function drawStartScreen(c,ca) {
 		width: btnWidth,
 		height: btnHeight
 	};
+	startX = centerX - totalWidth/2 + btnWidth/2;
+	startY = canvasHeight - bottomMargin + btnHeight + btnSpacing;
+	// 绘制分享按钮
+	drawButton(ctx, startX, startY, btnWidth, btnHeight, '无人区','#4CAF50', '#45a049');
+	wx.globalData.loadButton = {
+		x: startX - btnWidth/2,
+		y: startY - btnHeight/2,
+		width: btnWidth,
+		height: btnHeight
+	};
 
+
+	
 	// 添加底部提示文字
 	ctx.save();
 	const bottomY = screenHeight - 50 * settings.scale; // 距离底部20像素

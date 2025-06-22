@@ -15,6 +15,7 @@ import { animate } from './pages/bubales.js';
 import { animateTreis } from './pages/teris.js';
 import { animateBee } from './pages/bee.js';
 import { animatePlane } from './pages/plane.js';
+import { InitLoad,animateLoad } from './pages/load.js';
 const tt = wx
 console.log('game.js 导入的 settings:', settings,settings.blockHeight);
 //初始化
@@ -229,6 +230,9 @@ export function animLoop() {
 	case 6: //飞机
 		animatePlane();
 		break;
+	case 7: //无人区
+		animateLoad();
+		break;
 	case 999: //返回主界面
 		//requestAnimationFrame(animLoop);
 		wx.globalData.gameState = 0;
@@ -372,6 +376,17 @@ function setStartScreen() {
 		// 检查是否点击了飞机按钮
 		if (isButtonClicked(touch, wx.globalData.planeButton)) {
 			touchPlane(e);
+			return;
+		}
+		// 检查是否点击了无人区按钮
+		if (isButtonClicked(touch, wx.globalData.loadButton)) {
+			if (wx.globalData.gameState !== 0) return;
+			audioManager.stopBGM();
+			//console.log('touchBee')
+			InitLoad(canvas,ctx)
+			wx.globalData.gameState = 7
+			wx.offTouchStart(handleMainPage);
+			//InitLoad(canvas, ctx);
 			return;
 		}
     }

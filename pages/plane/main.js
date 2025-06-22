@@ -25,6 +25,7 @@ export default class Main {
 	ctx = ctx1;
     // 开始游戏
     this.start();
+	GameGlobal.databus = new DataBus(); // 全局数据管理，用于管理游戏状态和数据
   }
 
   /**
