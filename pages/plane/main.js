@@ -63,7 +63,10 @@ export default class Main {
 
 			// 如果敌机存活并且发生了发生碰撞
 			if (enemy.isCollideWith(bullet)) {
-				enemy.destroy(); // 销毁敌机
+				enemy.life--;
+				if (enemy.life <= 0) {
+					enemy.destroy(); // 销毁敌机
+				}	
 				bullet.destroy(); // 销毁子弹
 				GameGlobal.databus.score += 1; // 增加分数
 				if(GameGlobal.databus.score % 10 === 0) {

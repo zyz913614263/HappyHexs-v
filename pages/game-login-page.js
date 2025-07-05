@@ -322,7 +322,7 @@ export function drawStartScreen(c,ca) {
 	};
 	startX = centerX - totalWidth/2 + btnWidth/2;
 	startY = canvasHeight - bottomMargin + btnHeight + btnSpacing;
-	// 绘制分享按钮
+	// 绘制无人区按钮
 	drawButton(ctx, startX, startY, btnWidth, btnHeight, '无人区','#4CAF50', '#45a049');
 	wx.globalData.loadButton = {
 		x: startX - btnWidth/2,
@@ -331,6 +331,15 @@ export function drawStartScreen(c,ca) {
 		height: btnHeight
 	};
 
+	// 绘制探险按钮
+	startX += btnWidth + btnSpacing;
+	drawButton(ctx, startX, startY, btnWidth, btnHeight, '探险', '#4CAF50', '#45a049');
+	wx.globalData.exploreButton = {
+		x: startX - btnWidth/2,
+		y: startY - btnHeight/2,
+		width: btnWidth,
+		height: btnHeight
+	};
 
 	
 	// 添加底部提示文字

@@ -8,7 +8,7 @@ const PLAYER_IMG_SRC = 'res/images/hero.png';
 const PLAYER_WIDTH = 80;
 const PLAYER_HEIGHT = 80;
 const EXPLO_IMG_PREFIX = 'res/images/explosion';
-const PLAYER_SHOOT_INTERVAL = 20;
+let PLAYER_SHOOT_INTERVAL = 20;
 
 export default class Player extends Animation {
   constructor() {
@@ -153,6 +153,10 @@ export default class Player extends Animation {
 
   updateLevel() {
     this.level++;
+	//PLAYER_SHOOT_INTERVAL/=2;
+	if (PLAYER_SHOOT_INTERVAL < 5) {
+		PLAYER_SHOOT_INTERVAL = 5;
+	}
 	if (this.level >= 5) {
 		this.level = 5;
 	}
