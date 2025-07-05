@@ -1,2 +1,273 @@
-let a=Math.log,b=Math.pow,c=Math.floor,d=Math.random,e=Math.exp,f=Math.abs,g=Math.round,h=Math.E,i=Math.LN10,j=Math.LN2,k=Math.LOG10E,l=Math.PI,m=Math.SQRT1_2,n=Math.SQRT2;let o=45,p=16,q=8,r=6,s=19,t=93,u=80,v=11,w=28,x=74,y=14,z=79,A=4,B=83,C=43,D=6,E=6,F=38,G=76,H=85,I=97,J=97,K=51,L=15,M=65,N=85,O=68,P=47,Q=36,R=12,S=68,T=29,U=82,V=46,W=13,X=55,Y=83,Z=99,_0=67,_1=16,_2=14,_3=76,_4=56,_5=99,_6=62,_7=71,_8=68,_9=71,ba=2,bb=88,bc=73,bd=69,be=90,bf=21,bg=74,bh=61,bi=10,bj=60,bk=49,bl=84,bm=18,bn=48,bo=48,bp=79,bq=88,br=40,bs=8,bt=38,bu=69,bv=49,bw=65,bx=48,by=28,bz=30,bA=17,bB=38,bC=34,bD=50,bF=86,bG=72;let bI=c((bC+bw+79)/3)<c(e((a(z)+a(65)+a(34))/3)),bJ=c((15+D+72)/3)<c(e((a(72)+a(L)+a(D))/3)),bK=2*ba+85*H+71*_7+86*bF<H*ba+85*bF+71*86+71*ba,bM=79*79+45*o+18*bm>=o*bm+18*79+bp*o,bN=36*Q+8*q+38*bB+56*_4<bB*Q+q*_4+56*38+8*Q,bO=g(2*a(f(85*74+55*99)))>g(a(55*X+H*H)+a(74*bg+99*99)),bP=c((bo+85+38+_5)/4)>=c(e((a(H)+a(_5)+a(F)+a(48))/4)),bQ=g(2*a(f(M*D+bo*bo)))>g(a(M*M+48*48)+a(6*D+48*48)),bR=g(2*a(f(43*L+55*bf)))<=g(a(21*21+L*L)+a(55*X+C*C)),bS=82*U+28*w+12*R>=12*w+28*U+12*U,bT=X*X+51*K+14*14<y*X+55*51+K*y,bU=c((71+_6+93)/3)<c(e((a(71)+a(_6)+a(93))/3)),bY=J*J+16*_1+8*8<J*_1+8*_1+97*q,bZ=c((_1+48+bD)/3)>=c(e((a(50)+a(_1)+a(bn))/3)),b0=g(2*a(f(bG*bG+48*Y)))<=g(a(83*Y+72*bG)+a(48*48+bG*bG)),b1=c((bl+15+48)/3)<c(e((a(84)+a(48)+a(L))/3)),b2=g(2*a(f(69*11+z*bD)))<=g(a(69*bu+z*z)+a(11*11+bD*bD)),b3=g(2*a(f(71*bD+97*bg)))<=g(a(97*I+bD*bD)+a(71*71+74*bg)),b4=g(2*a(f(I*O+12*B)))<=g(a(97*I+83*83)+a(68*68+12*R)),b5=g(2*a(f(49*bk+16*I)))<=g(a(16*16+bk*bk)+a(97*97+bk*bk)),b6=c((8+80+br)/3)>=c(e((a(40)+a(u)+a(8))/3)),b7=c((99+_8+bx)/3)<c(e((a(48)+a(_8)+a(_5))/3)),b8=c((38+38+L+60)/4)>=c(e((a(L)+a(60)+a(bt)+a(F))/4)),b9=g(2*a(f(4*4+68*R)))>g(a(68*S+A*A)+a(4*A+12*R)),ca=28*28+38*bB+68*68+65*65>=68*65+65*bB+by*_8+38*28,cb=c((19+_0+bt+V)/4)<c(e((a(V)+a(67)+a(38)+a(19))/4)),cc=6*D+L*L+68*O+34*bC<68*L+bC*L+68*D+6*34,cd=c((85+48+bh)/3)<c(e((a(61)+a(N)+a(48))/3)),ce=g(2*a(f(2*ba+bs*o)))<=g(a(2*ba+bs*bs)+a(45*45+ba*ba)),cf=g(2*a(f(Z*Z+71*bq)))<=g(a(99*Z+88*bq)+a(71*71+99*99)),cg=g(2*a(f(69*B+40*bB)))>g(a(83*83+40*br)+a(69*69+38*38)),ch=c((10+14+38)/3)<c(e((a(38)+a(bi)+a(14))/3)),ci=c((bz+38+97+21)/4)>=c(e((a(21)+a(bt)+a(30)+a(I))/4)),cj=g(2*a(f(z*y+61*bh)))>g(a(61*bh+79*z)+a(14*14+61*bh)),ck=g(2*a(f(99*Z+14*73)))<=g(a(14*y+99*Z)+a(73*bc+99*Z)),cl=99*Z+97*J+t*t+47*P<P*t+99*47+97*t+99*J,cm=c((28+bl+14+Y)/4)<c(e((a(28)+a(83)+a(14)+a(bl))/4)),cn=r*r+47*P+bv*bv+45*45>=47*45+45*bv+bv*r+6*P,co=g(2*a(f(55*55+65*E)))<=g(a(55*55+bw*bw)+a(55*X+6*6)),cp=c((K+Y+p)/3)>=c(e((a(16)+a(Y)+a(51))/3));let cq,cs,ct,cu,cv,cw,cx,cy,cz,cA,cB,cC,cD,cE,cF,cG,cH,cI,cJ,cK,cL,cM,cN,cO,cP,cQ,cR,cS,cT,cU,cV,cW,cX,cY,cZ,c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,da,bE,db,dc,bH,dd,de,bL,df,dg,dh,di,dj,bV,bW,bX,dk,dl,dm,dn,dp,dq,dr,ds,dt,du,dv,dw,dx,dy,dz,dA,dB,dC,dD,dE,dF,dG,dH,dI,dJ,dK,dL,dM,dN,dO,dP,dQ,dR,dS,dT,dU,dV,dW,dX,dY,dZ,d0,d1,d2,d3,d4,d5,d6,d7,d8;let d9=1,ea=1;String.prototype.m=String.prototype.substr;String.prototype.s=function(a){let b=[];for(let c=0;c<this.length;c+=a)b.push(this.slice(c,c+a));return b};let eb={P:function a(a,b){let c=a.length;let d=[];for(let e=0;e<c;++e){let f=-1;if(2===b){f=3*(e-23)%8;if(f<0)f+=c}if(3===b){f=25*(e-24)%27;if(f<0)f+=c}if(4===b){f=5*(e-36)%52;if(f<0)f+=c}if(5===b){f=37*(e-143)%50;if(f<0)f+=c}if(6===b){f=31*(e-155)%48;if(f<0)f+=c}if(7===b){f=30*(e-42)%49;if(f<0)f+=c}if(8===b){f=21*(e-23)%40;if(f<0)f+=c}if(9===b){f=1*(e-45)%90;if(f<0)f+=c}if(10===b){f=23*(e-4)%70;if(f<0)f+=c}if(11===b){f=57*(e-27)%88;if(f<0)f+=c}if(12===b){f=29*(e-6)%36;if(f<0)f+=c}if(13===b){f=4*(e-4)%13;if(f<0)f+=c}if(14===b){f=5*(e-63)%14;if(f<0)f+=c}if(15===b){f=13*(e-9)%45;if(f<0)f+=c}if(16===b){f=3*(e-111)%16;if(f<0)f+=c}if(17===b){f=12*(e-26)%17;if(f<0)f+=c}if(20===b){f=9*(e-46)%40;if(f<0)f+=c}if(f>=0)d[f]=a[e]}return d.join("")}};let ec=eb.P("yPtcIdtd",2);let ed=ec.s(2);let ee=eb.P("sogltsaoygdxmiscoxcbwndxgan",3);let ef=ee.s(3);let eg=eb.P("#ivwftrebgu0mrvtsasdb0nesoetpibetoaeiqnhrl0tdanrlun(",4);let eh=eg.s(4);let ei=eb.P("ectwgyeuapeaeaaeiasaeetsosilsxenltlspkvdyhlslhcrdd",5);let ej=ei.s(5);let ek=eb.P("ilkesseogttloidcsmpatkhclnaherediershnctebetgleh",6);let el=ek.s(6);let em=eb.P("wsad0er#e0eeAerrl0atcc0oeFc0ft5deEe#vohh0nsFk0ot0",7);let en=em.s(7);let eo=eb.P("edtlocitiSnrrntfbleTdxBposktootwiigailla",8);let ep=eo.s(8);let eq=eb.P("lastCombocomboTimefillStyletextAlignlineWidthprototypemagnitudegameStatefillColortempColor",9);let er=eq.s(9);let es=eb.P("tleagmttuoxnReetThsetakglonsreatLvsenydatiClseuauctriatfDeflliabdbaeor",10);let et=es.s(10);let eu=eb.P("lgriemoFCaetleolsaeegxecrondriSuetytThtakoleiontgfrTAetasHmobskgyhaohnxprueHrlteLlslkrgt",11);let ev=eu.s(11);let ew=eb.P("ueBatrcanaaosecbnethlfleeeiixdagntLt",12);let ex=ew.s(12);let ey=eb.P(",g00r(,)a00b,",13);let ez=ey.s(13);let eA=eb.P("rtioynpdeeePrf",14);let eB=eA.s(14);let eC=eb.P("torictrCmatoiVobnyrpeloglelloMuadiorulscecSla",15);let eD=eC.s(15);let eE=eb.P("soCleelkldoBcoid",16);let eF=eE.s(16);let eG=eb.P("ltuairiencRPrtxeo",17);let eH=eG.s(17);let eI=eb.P(" iltxsals导nay.enot入grCjtgch的sVostuie :en",20);let eJ=eI.s(20);let eK="2,A,q,8,?,E,B~,c,6,B,N,i";function eL(a){let b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+./:;<=>?@[]^_`{|}~"',c={};for(let a=0;a<b.length;++a)c[b[a]]=a;function d(a){let d=b.length,e=0,f=a.length,g=1;for(let b=f-1;b>=0;b--){let f=c[a[b]];e+=f*g;g*=d}return e}let e=",",f=a.split(e),g=Number(f[0]),h=[];for(let a=1;a<f.length;++a){let b=d(f[a]);h.push(b+g)}return h}let eM=eL(eK);if(d9)cq=eh[5];if(d9)cs=",";if(d9)ct=cH=c3=bH=dO=8;if(d9)cu=")";if(d9)cv=ef[5];if(d9)cw=eJ[1];if(d9)cx=ev[3];if(d9)cy=ev[4];if(d9)cz=er[3];if(d9)cA=dE=d5=1;if(d9)cB=eM[2];if(d9)cC=eM[3];if(d9)cD=er[4];if(d9)cE=di=4;if(d9)cF=ep[0];if(d9)cG=ed[1];if(d9)cI=ej[0];if(d9)cJ=eM[4];if(d9)cK=ej[1];if(d9)cL=0;if(d9)cM=ev[1];if(d9)cN=el[1];if(d9)cO=et[1];if(d9)cP=ev[5];if(d9)cQ=eh[6];if(d9)cR="x";if(d9)cS=et[0];if(d9)cT=et[3];if(d9)cU=c5=dK=dM=dT=2;if(d9)cV=9;if(d9)cW=el[2];if(d9)cX=ed[2];if(d9)cY=er[5];if(d9)cZ=er[6];if(d9)c0=dx=3;if(d9)c1=eh[7];if(d9)c2=eD[2];if(d9)c4=et[4];if(d9)c6=el[3];if(d9)c7=ej[7];if(d9)c8=eB[0];if(d9)c9=er[0];if(d9)da=ej[5];if(d9)bE=ej[3];if(d9)db=eM[6];if(d9)dc=5;if(d9)dd=ed[3];if(d9)de=ef[6];if(d9)bL=er[1];if(d9)df=ef[7];if(d9)dg=ef[0];if(d9)dh=ef[1];if(d9)dj=el[4];if(d9)bV=et[2];if(d9)bW=ex[0];if(d9)bX=ep[1];if(d9)dk=du=dJ=dY=7;if(d9)dl=er[2];if(d9)dm=en[0];if(d9)dn=eh[8];if(d9)dp=ev[2];if(d9)dq=eh[3];if(d9)dr=eH[0];if(d9)ds=ej[2];if(d9)dt=ev[0];if(d9)dv=eM[8];if(d9)dw=ex[1];if(d9)dy=eh[4];if(d9)dz=dV=d0=6;if(d9)dA=eF[0];if(d9)dB=eh[0];if(d9)dC=en[2];if(d9)dD=et[5];if(d9)dF=el[5];if(d9)dG=en[3];if(d9)dH=eh[9];if(d9)dI=eh[10];if(d9)dL=ef[4];if(d9)dN=eh[11];if(d9)dP=ep[3];if(d9)dQ=eM[10];if(d9)dR=eh[12];if(d9)dS=ev[6];if(d9)dU=en[4];if(d9)dW=el[6];if(d9)dX=ex[2];if(d9)dZ=ev[7];if(d9)d1=er[9];if(d9)d2=ef[8];if(d9)d3=et[6];if(d9)d4=ep[4];if(d9)d6=c((5+dE+8+1+0)/5)<c(e((a(cL)+a(dc)+a(8)+a(1)+a(1))/5));if(d9)d7=dc*dc+cL*cL+8*ct+1*cA>=cA*cL+cL*dc+ct*cA+8*dc;if(d9)d8=1*dE>=1*dE;if(d9&&d8){ct=0;cA=13;cH="";cV="";c3="t";bH="";dz="";dE=6;dJ="an";dK="";dM="rgb";dT="fi";dV="t"}if(d9&&d7){cE="a";cL=8;cU="";c0="";c5="";dc=10;di="le";dk="";du="";dx="";dO="";dY="m";d0="#";d5="r"}if(d9&&d6){ct+=3;ct+=7;cA+=4;cA+=8;cE+=cq;cE+=dO;cH+=dk;cH+=dS;cL+=4;cL+=9;cU+=dM;cU+=cC;cV+=bE;cV+=bX;c0+=cR;c0+=dW;c3+=dm;c3+=cF;c5+=db;c5+=d5;dc+=2;dc+=9;bH+=dZ;bH+=c8;di+=cw;di+=dC;dk+=bX;dk+=c5;du+=cE;dx+=dP;dz+=ct;dz+=dg;dE+=8;dE+=6;dJ+=d3;dJ+=dg;dK+=cY;dK+=cN;dM+=dQ;dM+=dU;dO+=dQ;dO+=c7;dT+=c5;dT+=dI;dV+=cu;dV+=cY;dY+=cq;dY+=d2;d0+=c6;d0+=dz;d5+=c1;d5+=d3}if(d9&&d7){ct+=1;cA+=14;cE+="ngularVe";cH+="d";cL+=125;cV+="y";c3+="ex";dk+="add";dx+="ch";dE+=8;dJ+="gularV";dT+="ll";dV+="ext";dY+="i";d5+="esto"}if(d9&&d8){cU+="wid";c0+="lastCol";c5+="n";dc+=28;bH+="lan";di+="ng";du+="s";dz+="ap";dK+="a";dM+="a(0,0";dO+="s";d0+="00"}if(d9&&d7){ct+=1;cE+="locity";cL+=47;c3+="ts";bH+="e";dk+="Blo";dz+="ply";dE+=1;dO+="co";dV+="Alig";d0+="0"}if(d9&&d8){cA+=8;cH+="t";cU+="th";c0+="orScore";c5+="o";dc+=22;di+="th";dx+="eck";dJ+="elocity";dK+="b";dM+=",0,0)";dT+="Styl";dY+="ddl";d5+="re"}if(d9&&d7){cA+=9;c5+="w";dk+="ck";dJ+="Const";dT+="e";d0+="000"}if(d9&&d8){c0+="d";dK+="s";dO+="re";dV+="n";dY+="e"}d9=0;function eN(a,b,c){let d=a[b];a[b]=a[c];a[c]=d}let tt;let arrayToColor;arrayToColor=function(a){return cq+a[0]+cs+a[1]+cs+a[ct]+cu};let Hex;import Block from "./Block.js";import{settings}from "../settings.js";import{drawPolygon}from "../comon.js";import{audioManager}from "./music.js";import{Text}from "../comon.js";console[cv](cw,settings,settings[cx]);tt=wx;Hex=class Hex{constructor(a){this[cy]=0,this[cz]=[cA,cB,cC],this[cD]=[cA,cB,cC],this[cE]=0,this[cF]=0,this[cG]=0,this[cH]=1,this[cI]=cJ,this[cK]=cL / this[cI],this[cM]=this[cK],this[cN]=[],this[cO]=a,this[cP]=cQ,this[cR]=wx[cS][cT][cU]/ ct,this[cV]=wx[cS][cT][cW]/ ct,this[cX]=0,this[cY]=this[cX]-settings[cZ],this[c0]=c1,this[c2]=1,this[c3]=[],this[c4]=Date[c5](),this[c6]=[[],[],[],[],[],[]],this[c7]=1}};!function(){"use strict";if(ea&&d6){du+=c5;dx+=cS}if(ea&&d8)du+="qr";if(ea&&d8){du+="t";dx+="ed"}ea=0;Object[c8](Hex[c9],da,{[bE](a){var b,c,d;b=db+dc*a[bH],d=(b*=Math[dd]/ cL,Math[de](b)*a[bL]),c=Math[df](b)*a[bL];if(wx[cS][dg]-=d,wx[cS][dh]+=c,a[bL]/=ct*(this[cH]+0.5),a[bL]<1)for(var e=0;e<this[cN][di];e++)this[cN][e]==a&&this[cN][dj](e,1)},[bV]:false,[bW]:true,[bX]:true});Object[c8](Hex[c9],dk,function(){let a;a={[bE](a){var b;1==wx[cS][dl]&&(a[dm]=1,a[dn]=0.6,b=this[cI]-a[dp],this[cN][dq]({[bH]:a[dp],[bL]:4.5*(wx[cS][dr]||1)*settings[ds]}),b=((b+=this[cF])+this[cI])%this[cI],a[dt]=this[cO]/ ct*Math[du](dv)+a[cW]*this[c6][b][di],this[c6][b][dq](a),a[dw]=b,a[dx]=1)},[bV]:false,[bW]:true,[bX]:true};return a}[dy](this)[dz]());Object[c8](Hex[c9],dA,{[bE](a,b,c){var d,e;a[dm]||(void 0!==b?(e=c,b<=0?a[dt]-a[dB]*this[cH]*settings[ds]-this[cO]/ ct*Math[du](dv)<=0?(a[dt]=this[cO]/ ct*Math[du](dv),a[dm]=1,a[dx]=1):(a[dm]=0,a[dB]=1.5+wx[cS][dC][dD]/ dE*dv):e[b-1][dm]&&a[dt]-a[dB]*this[cH]*settings[ds]-e[b-1][dt]-e[b-1][cW]<=0?(a[dt]=e[b-1][dt]+e[b-1][cW],a[dm]=1,a[dx]=1):(a[dm]=0,a[dB]=1.5+wx[cS][dC][dD]/ dE*dv)):(d=this[cI]-a[dp],d=((d+=this[cF])+this[cI])%this[cI],0<(e=this[c6][d])[di]?a[dt]+a[dB]*this[cH]*settings[ds]-e[e[di]-1][dt]-e[e[di]-1][cW]<=0&&(a[dt]=e[e[di]-1][dt]+e[e[di]-1][cW],this[dk](a)):a[dt]+a[dB]*this[cH]*settings[ds]-this[cO]/ ct*Math[du](dv)<=0&&(a[dt]=this[cO]/ ct*Math[du](dv),this[dk](a))))},[bV]:false,[bW]:true,[bX]:true});Object[c8](Hex[c9],dF,{[bE](a){if(1===wx[cS][dl]){for(this[cF]+=a;this[cF]<0;)this[cF]+=cJ;this[cF]=this[cF]%this[cI],this[c6][dG](function(b){b[dG](function(b){b[cM]=b[cM]-dc*a})}),this[cM]=this[cM]-dc*a,this[c4]=Date[c5](),audioManager[dH]()}},[bV]:false,[bW]:true,[bX]:true});Object[c8](Hex[c9],dI,{[bE](){let a;var b,c,d,e,f,g;this[cR]=wx[cS][cT][cU]/ ct,-ct!=wx[cS][dl]&&(this[cV]=wx[cS][cT][cW]/ ct),wx[cS][dg]=0;for(var h=wx[cS][dh]=0;h<this[cN][di];h++)this[da](this[cN][h]);this[cK]>this[cM]?this[cE]-=wx[cS][dJ]*this[cH]:this[cK]<this[cM]&&(this[cE]+=wx[cS][dJ]*this[cH]),Math[dK](this[cK]-this[cM]+this[cE])<=Math[dK](this[cE])?(this[cK]=this[cM],this[cE]=0):this[cK]+=this[cE],drawPolygon(wx[cS][dL],this[cR]+wx[cS][dg],this[cV]+wx[cS][dh]+this[cG],this[cI],this[cO],this[cK],arrayToColor(this[cz]),0,dM);e=wx[cS][dL],b=(e[dN](),wx[cS][dO][dP]()),f=1.2*this[cO];a=dQ*settings[ds];e[dR]=`bold ${a}px Arial`;d=e[dS](b)[cU],g=(f<d&&(a*=f / d),e[dT]=dU,e[dV]=dW,e[dX]=dY,e[dZ]=d0,e[d1]=Math[d2](ct,a / dE),this[cR]+wx[cS][dg]),c=this[cV]+wx[cS][dh]+this[cG];e[d3](b,g,c),e[d4](b,g,c),e[d5]()},[bV]:false,[bW]:true,[bX]:true})}[dy](Hex)();export default Hex//WXAG_OBF_PLUGIN_BY_(eyJhbGdvX3ZlcnNpb24iOjEsIm9iZl9sZXZlbCI6Mywid2F0ZXJtYXJrX2xldmVsIjoxLCJwbHVnaW5fcHJvdGVjdF9sZXZlbCI6MCwic2tpcF9yZW5hbWVfdmFyX2luX3RvcF9zY29wZSI6dHJ1ZSwiaXNfZGVidWciOjAsInRpbWVfc3RyIjoiMjAyNS0wMy0yMCAxMDoyNjoxMCJ9)
-//# sourceMappingURL=Hex.js.map
+import Block from './Block.js';
+import { settings} from '../settings.js';
+import { drawPolygon } from '../comon.js';
+import { audioManager } from './music.js';
+import { Text } from '../comon.js';
+console.log('hex.js 导入的 settings:', settings,settings.blockHeight);
+const tt = wx
+// 主六边形类
+class Hex {
+	constructor(sideLength) {
+		this.playThrough = 0;
+		// 填充颜色
+		this.fillColor = [44,62,80];
+		// 临时颜色
+		this.tempColor = [44,62,80];
+		// 角速度
+		this.angularVelocity = 0;
+		// 旋转的次数
+		this.position = 0;
+		// 垂直位移
+		this.dy = 0;
+		// 时间增量
+		this.dt = 1;
+		// 六边形的边数
+		this.sides = 6;
+		// 每个角的角度
+		this.angle = 180 / this.sides;
+		// 目标角度
+		this.targetAngle = this.angle;
+		// 存储震动效果的数组
+		this.shakes = [];
+		// 六边形的边长
+		this.sideLength = sideLength;
+		// 描边颜色
+		this.strokeColor = 'blue';
+		// 六边形的中心x坐标
+		this.x = wx.globalData.trueCanvas.width / 2;
+		// 六边形的中心y坐标
+		this.y = wx.globalData.trueCanvas.height / 2;
+		// 当前时间
+		this.ct = 0;
+		// 上次连击的时间
+		this.lastCombo = this.ct - settings.comboTime;
+		// 上次得分的颜色
+		this.lastColorScored = "#000";
+		// 连击时间
+		this.comboMultiplier = 1;
+		// 存储文本对象的数组
+		/**
+		 * @type {Array<Text>} - 这是一个数组类型的变量
+		 */
+		this.texts = [];
+		// 上次旋转的时间
+		this.lastRotate = Date.now();
+		/**
+		 * @type {Array<Array<Block>>} - 这是一个数组类型的变量
+		 */
+		// 存储每个边上的块
+		this.blocks = [[],[],[],[],[],[]];
+		this.delay = 1;
+	}
+	shake(obj) { //lane as in particle lane
+		// 计算震动的角度
+		var angle = 30 + obj.lane * 60;
+		// 将角度转换为弧度
+		angle *= Math.PI / 180;
+		// 计算震动的水平位移
+		var dx = Math.cos(angle) * obj.magnitude;
+		// 计算震动的垂直位移
+		var dy = Math.sin(angle) * obj.magnitude;
+		// 更新全局水平位移
+		wx.globalData.gdx -= dx;
+		// 更新全局垂直位移
+		wx.globalData.gdy += dy;
+		// 减少震动的幅度
+		obj.magnitude /= 2 * (this.dt + 0.5);
+		// 如果震动幅度小于1
+		if (obj.magnitude < 1) {
+			// 遍历震动数组
+			for (var i = 0; i < this.shakes.length; i++) {
+				// 如果找到了当前震动对象
+				if (this.shakes[i] == obj) {
+					// 从震动数组中移除当前震动对象
+					this.shakes.splice(i, 1);
+				}
+			}
+		}
+	};
+	/**
+	 * @param {Block} block 
+	 */
+	addBlock(block) {
+		//audioManager.fall();
+       // 如果游戏状态不是进行中或暂停，直接返回
+		if (!(wx.globalData.gameState == 1)) return;
+	
+		// 将block标记为已安置
+		block.settled = 1;
+		// 设置block的颜色透明度
+		block.tint = 0.6;
+	
+		// 计算block所在的lane
+		var lane = this.sides - block.fallingLane;
+		// 添加震动效果
+		this.shakes.push({lane: block.fallingLane, magnitude: 4.5 * (wx.globalData.currentPixelRatio ? wx.globalData.currentPixelRatio : 1) * (settings.scale)});
+		// 根据主六边形的旋转位置调整lane
+		lane += this.position;
+		lane = (lane + this.sides) % this.sides;
+	
+		// 计算block距离主六边形中心的距离
+		block.distFromHex = this.sideLength / 2 * Math.sqrt(3) + block.height * this.blocks[lane].length;
+		// 将block添加到对应的lane中
+		this.blocks[lane].push(block);
+	
+		// 设置block的附加lane
+		block.attachedLane = lane;
+		// 标记block为已检查
+		block.checked = 1;
+    };
+	doesBlockCollide(block, position, tArr) {
+		// 如果block已经安置，直接返回
+		if (block.settled) {
+			return;
+		}
+
+		// 如果提供了position参数
+		if (position !== undefined) {
+			arr = tArr;
+			// 如果position小于等于0
+			if (position <= 0) {
+				// 检查block是否与主六边形的边缘碰撞
+				if (block.distFromHex - block.iter * this.dt * settings.scale - (this.sideLength / 2) * Math.sqrt(3) <= 0) {
+					// 将block的位置设置为主六边形的边缘
+					block.distFromHex = (this.sideLength / 2) * Math.sqrt(3);
+					block.settled = 1;
+					block.checked = 1;
+				} else {
+					block.settled = 0;
+					block.iter = 1.5 + (wx.globalData.waveone.difficulty / 15) * 3;
+				}
+			} else {
+				// 检查block是否与前一个block碰撞
+				if (arr[position - 1].settled && block.distFromHex - block.iter * this.dt * settings.scale - arr[position - 1].distFromHex - arr[position - 1].height <= 0) {
+					// 将block的位置设置为前一个block的顶部
+					block.distFromHex = arr[position - 1].distFromHex + arr[position - 1].height;
+					block.settled = 1;
+					block.checked = 1;
+				} else {
+					block.settled = 0;
+					block.iter = 1.5 + (wx.globalData.waveone.difficulty / 15) * 3;
+				}
+			}
+		} else {
+			// 计算block所在的lane
+			var lane = this.sides - block.fallingLane;
+			lane += this.position;
+			lane = (lane + this.sides) % this.sides;
+			var arr = this.blocks[lane];
+			//console.log(block,lane,arr);
+			// 如果当前lane中有blocks
+			if (arr.length > 0) {
+				// 检查block是否与当前lane中的最后一个block碰撞
+				if (block.distFromHex + block.iter * this.dt * settings.scale - arr[arr.length - 1].distFromHex - arr[arr.length - 1].height <= 0) {
+					// 将block的位置设置为当前lane中最后一个block的顶部
+					block.distFromHex = arr[arr.length - 1].distFromHex + arr[arr.length - 1].height;
+					this.addBlock(block);
+				}
+			} else {
+				// 检查block是否与主六边形的边缘碰撞
+				if (block.distFromHex + block.iter * this.dt * settings.scale - (this.sideLength / 2) * Math.sqrt(3) <= 0) {
+					// 将block的位置设置为主六边形的边缘
+					block.distFromHex = (this.sideLength / 2) * Math.sqrt(3);
+					this.addBlock(block);
+				}
+			}
+		}
+	};
+	rotate(steps) {
+		
+		//console.log("rotate",steps);
+		//if(Date.now()-this.lastRotate<75 && !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) return;
+		if (!(wx.globalData.gameState === 1)) return;
+		this.position += steps;
+		
+
+		while (this.position < 0) {
+			this.position += 6;
+		}
+
+		this.position = this.position % this.sides;
+		this.blocks.forEach(function(blocks) {
+			blocks.forEach(function(block) {
+				block.targetAngle = block.targetAngle - steps * 60;
+			});
+		});
+
+		this.targetAngle = this.targetAngle - steps * 60;
+		this.lastRotate = Date.now();
+		audioManager.move();
+	};
+
+	draw() {
+		this.x = wx.globalData.trueCanvas.width/2;
+
+		if (wx.globalData.gameState != -2) {
+			this.y = wx.globalData.trueCanvas.height/2;
+		}
+		//this.sideLength = settings.hexWidth;
+		wx.globalData.gdx = 0;
+		wx.globalData.gdy = 0;
+		for (var i = 0; i < this.shakes.length; i++) {
+			this.shake(this.shakes[i]);
+		}
+		if (this.angle > this.targetAngle) {
+			this.angularVelocity -= wx.globalData.angularVelocityConst * this.dt;
+		}
+		else if(this.angle < this.targetAngle) {
+			this.angularVelocity += wx.globalData.angularVelocityConst * this.dt;
+		}
+
+		if (Math.abs(this.angle - this.targetAngle + this.angularVelocity) <= Math.abs(this.angularVelocity)) { //do better soon
+			this.angle = this.targetAngle;
+			this.angularVelocity = 0;
+		}
+		else {
+			this.angle += this.angularVelocity;
+		}
+		//console.log("draw hex",this.sideLength,settings.baseHexWidth);
+		drawPolygon(wx.globalData.ctx,this.x + wx.globalData.gdx, this.y + wx.globalData.gdy + this.dy, this.sides, this.sideLength, this.angle,arrayToColor(this.fillColor) , 0, 'rgba(0,0,0,0)');
+	
+		  // 添加分数显示
+		  const ctx = wx.globalData.ctx;
+		  ctx.save();
+		  
+		  // 计算合适的字体大小
+		  const score = wx.globalData.score.toString();
+		  const maxWidth = this.sideLength * 1.2;  // 六边形宽度的 60%
+		  let fontSize = 36 * settings.scale;
+		  
+		  // 设置初始字体来测量文本宽度
+		  ctx.font = `bold ${fontSize}px Arial`;
+		  let textWidth = ctx.measureText(score).width;
+		  
+		  // 如果文本太宽，调整字体大小
+		  if (textWidth > maxWidth) {
+			  fontSize = fontSize * (maxWidth / textWidth);
+		  }
+		  
+		  // 应用最终的文本样式
+		  ctx.fillStyle = '#FFA500';  // 橙色
+		  ctx.textAlign = 'center';
+		  ctx.textBaseline = 'middle';
+		  
+		  // 添加描边使文字更清晰
+		  ctx.strokeStyle = '#000000';
+		  ctx.lineWidth = Math.max(2, fontSize / 15);  // 描边宽度随字体大小调整
+		  
+		  // 在六边形中心绘制分数
+		  const x = this.x + wx.globalData.gdx;
+		  const y = this.y + wx.globalData.gdy + this.dy;
+		  
+		  // 先绘制描边
+		  ctx.strokeText(score, x, y);
+		  // 再绘制文字
+		  ctx.fillText(score, x, y);
+		  
+		  ctx.restore();
+	};
+}
+function arrayToColor(arr){
+	return 'rgb(' + arr[0]+ ','+arr[1]+','+arr[2]+')';
+}
+export default Hex;

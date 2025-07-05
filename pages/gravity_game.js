@@ -50,7 +50,7 @@ export default class PinballGame {
   }
 
   createWalls() {
-    const wallThickness = 20;
+    const wallThickness = 10;
     const walls = [
       // 左边界
       Matter.Bodies.rectangle(
@@ -106,8 +106,8 @@ export default class PinballGame {
 
   createFlippers() {
     // 弹板尺寸根据屏幕宽度调整
-    const flipperLength = this.width * 0.23;                                                                                                                                                                  / 屏幕宽度的25%
-    const flipperThickness = this.width * 0.02; // 屏幕宽度的2%
+    const flipperLength = this.width * 0.23;
+    const flipperThickness = this.width * 0.04; // 屏幕宽度的2%
     const flipperGap = this.width * 0.15; // 屏幕宽度的15%
     const flipperY = this.height * 0.8;
     
