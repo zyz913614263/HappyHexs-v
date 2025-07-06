@@ -1,5 +1,6 @@
 import { drawRoundRect } from '../comon.js';	
 import { settings } from '../settings.js';
+import GameCarousel from './components/game-carousel';
 import { audioManager } from '../entry/music.js';
 import {Init as InitPopo } from './bubales.js'
 import{ InitTeris } from './teris.js'
@@ -263,83 +264,9 @@ export function drawStartScreen(c,ca) {
 	drawGameTitle();
 	drawHighScore();
 
-	// 按钮配置
-	const btnWidth = 85* settings.scale;
-	const btnHeight = 60 * settings.scale;
-	const btnSpacing = 20 * settings.scale; // 按钮之间的间距
-	const bottomMargin = 200 * settings.scale; // 距离底部的距离
-	const totalButtons = 5; // 按钮总数
-	const totalWidth = (btnWidth * totalButtons) + (btnSpacing * (totalButtons - 1));
-	let startX = centerX - totalWidth/2 + btnWidth/2;
-	let startY = canvasHeight - bottomMargin;
-	// 绘制分享按钮
-	drawButton(ctx, startX, startY, btnWidth, btnHeight, '分享', '#3498db', '#2980b9');
-	wx.globalData.mainShareButton = {
-		x: startX - btnWidth/2,
-		y: startY - btnHeight/2,
-		width: btnWidth,
-		height: btnHeight
-	};
-
-	// 绘制泡泡按钮
-	startX += btnWidth + btnSpacing;
-	drawButton(ctx, startX, startY, btnWidth, btnHeight, '泡泡','#4CAF50', '#45a049');
-	wx.globalData.bubbleButton = {
-		x: startX - btnWidth/2,
-		y: startY - btnHeight/2,
-		width: btnWidth,
-		height: btnHeight
-	};
-
-	// 绘制方块按钮
-	startX += btnWidth + btnSpacing;
-	drawButton(ctx, startX, startY, btnWidth, btnHeight, '方块', '#4CAF50', '#45a049');
-	wx.globalData.terisButton = {
-		x: startX - btnWidth/2,
-		y: startY - btnHeight/2,
-		width: btnWidth,
-		height: btnHeight
-	};
-
-	// 绘制小蜜蜂按钮
-	startX += btnWidth + btnSpacing;
-	drawButton(ctx, startX, startY, btnWidth, btnHeight, '小蜜蜂', '#4CAF50', '#45a049');
-	wx.globalData.beeButton = {
-		x: startX - btnWidth/2,
-		y: startY - btnHeight/2,
-		width: btnWidth,
-		height: btnHeight
-	};
-
-	// 绘制飞机按钮
-	startX += btnWidth + btnSpacing;
-	drawButton(ctx, startX, startY, btnWidth, btnHeight, '飞机', '#4CAF50', '#45a049');
-	wx.globalData.planeButton = {
-		x: startX - btnWidth/2,
-		y: startY - btnHeight/2,
-		width: btnWidth,
-		height: btnHeight
-	};
-	startX = centerX - totalWidth/2 + btnWidth/2;
-	startY = canvasHeight - bottomMargin + btnHeight + btnSpacing;
-	// 绘制无人区按钮
-	drawButton(ctx, startX, startY, btnWidth, btnHeight, '无人区','#4CAF50', '#45a049');
-	wx.globalData.loadButton = {
-		x: startX - btnWidth/2,
-		y: startY - btnHeight/2,
-		width: btnWidth,
-		height: btnHeight
-	};
-
-	// 绘制探险按钮
-	startX += btnWidth + btnSpacing;
-	drawButton(ctx, startX, startY, btnWidth, btnHeight, '探险', '#4CAF50', '#45a049');
-	wx.globalData.exploreButton = {
-		x: startX - btnWidth/2,
-		y: startY - btnHeight/2,
-		width: btnWidth,
-		height: btnHeight
-	};
+	// 初始化游戏轮播图
+	const gameCarousel = new GameCarousel(canvas, settings);
+	gameCarousel.update();
 
 	
 	// 添加底部提示文字
