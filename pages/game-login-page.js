@@ -11,6 +11,7 @@ let bubbleX, bubbleY,btnWidth,btnHeight;
 let terisX, terisY;
 let canvas, ctx;
 let step = 80
+let gameCarousel;
 
 export function touchPop(e) {
 	if (wx.globalData.gameState !== 0) return;
@@ -265,10 +266,14 @@ export function drawStartScreen(c,ca) {
 	drawHighScore();
 
 	// 初始化游戏轮播图
-	const gameCarousel = new GameCarousel(canvas, settings);
-	gameCarousel.update();
+	if (!gameCarousel) {	
+		gameCarousel = new GameCarousel(canvas);
+		gameCarousel.update();
+	}else{
+		gameCarousel.update();
+	}
 
-	
+
 	// 添加底部提示文字
 	ctx.save();
 	const bottomY = screenHeight - 50 * settings.scale; // 距离底部20像素

@@ -1,18 +1,18 @@
 // 游戏轮播图组件
 export default class GameCarousel {
-	constructor(canvas, settings) {
+	constructor(canvas) {
 	  this.canvas = canvas;
 	  this.ctx = canvas.getContext('2d');
-	  this.settings = settings;
-	  this.width = canvas.width;
-	  this.height = canvas.height;
+	  this.pixelRatio = wx.globalData.currentPixelRatio;
+	  this.width = canvas.width/this.pixelRatio;
+	  this.height = canvas.height/this.pixelRatio;
 	  this.centerX = this.width / 2;
-	  this.centerY = this.height / 2;
+	  this.centerY = this.height - 200;
   
-	  // 配置参数
-	  this.CARD_WIDTH = 200 * settings.scale;
-	  this.CARD_HEIGHT = 300 * settings.scale;
-	  this.CARD_SPACING = 40 * settings.scale;
+	  // 配置参数 - 更大的卡片尺寸
+	  this.CARD_WIDTH = 320;
+	  this.CARD_HEIGHT = 120;
+	  this.CARD_SPACING = 20;
 	  
 	  // 状态
 	  this.currentIndex = 0;
@@ -24,18 +24,23 @@ export default class GameCarousel {
 	  
 	  // 游戏配置
 	  this.games = [
-		{ name: '分享', image: 'res/images/hero.png', key: 'mainShareButton' },
-		{ name: '泡泡', image: 'res/images/hero.png', key: 'bubbleButton' },
-		{ name: '方块', image: 'res/images/hero.png', key: 'terisButton' },
-		{ name: '小蜜蜂', image: 'res/images/hero.png', key: 'beeButton' },
-		{ name: '飞机', image: 'res/images/hero.png', key: 'planeButton' },
-		{ name: '无人区', image: 'res/images/hero.png', key: 'loadButton' },
-		{ name: '探险', image: 'res/images/hero.png', key: 'exploreButton' }
+		{ name: '分享', image: 'res/images/share.png', key: 'mainShareButton', desc: '分享给好友' },
+		//{ name: '泡泡', image: 'res/images/logo.png', key: 'bubbleButton', desc: '经典泡泡龙' },
+		{ name: '方块', image: 'res/images/teris.png', key: 'terisButton', desc: '俄罗斯方块' },
+		//{ name: '小蜜蜂', image: 'res/images/bee.png', key: 'beeButton', desc: '小蜜蜂' },
+		{ name: '飞机', image: 'res/images/plane.png', key: 'planeButton', desc: '飞机' },
+		//{ name: '无人区', image: 'res/images/load.png', key: 'loadButton', desc: '无人区' },
+		//{ name: '探险', image: 'res/images/explore.png', key: 'exploreButton', desc: '探险' }
 	  ];
 	  
 	  // 加载图片
 	  this.gameImages = {};
 	  this.loadImages();
+	  
+	  // 轮播配置
+	  this.autoPlayInterval = 5000; // 改为5秒
+	  this.autoPlayTimer = null;
+	  this.lastAutoPlayTime = 0; // 记录上次轮播时间
 	  
 	  // 绑定事件
 	  this.bindEvents();
@@ -47,9 +52,6 @@ export default class GameCarousel {
 		const img = wx.createImage();
 		img.onload = () => {
 		  this.imagesLoaded++;
-		  if (this.imagesLoaded === this.totalImages) {
-			this.update(); // 所有图片加载完成后更新画布
-		  }
 		};
 		img.src = game.image;
 		this.gameImages[game.name] = img;
@@ -59,17 +61,20 @@ export default class GameCarousel {
 	drawGameCard(game, x, y, scale = 1) {
 	  const width = this.CARD_WIDTH * scale;
 	  const height = this.CARD_HEIGHT * scale;
-	  const radius = 15; // 圆角半径
+	  const radius = 20 * this.pixelRatio; // 圆角半径
+	  
+	  this.ctx.save();
+	  
+	  // 绘制卡片阴影
+	  this.ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+	  this.ctx.shadowBlur = 20 * this.pixelRatio;
+	  this.ctx.shadowOffsetY = 10 * this.pixelRatio;
 	  
 	  // 绘制卡片背景
-	  this.ctx.save();
 	  this.ctx.fillStyle = '#ffffff';
-	  this.ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-	  this.ctx.shadowBlur = 10;
-	  this.ctx.shadowOffsetY = 5;
-
-	  // 手动绘制圆角矩形
 	  this.ctx.beginPath();
+	  
+	  // 手动绘制圆角矩形
 	  const left = x - width/2;
 	  const top = y - height/2;
 	  
@@ -99,18 +104,32 @@ export default class GameCarousel {
 	  const img = this.gameImages[game.name];
 	  if (img && img.complete) {
 		try {
-		  const imgWidth = width * 0.8;
+		  // 图片占据卡片上半部分
 		  const imgHeight = height * 0.6;
+		  const imgWidth = width * 0.9;
 		  const imgX = x - imgWidth/2;
-		  const imgY = y - height/2 + height * 0.2;
+		  const imgY = y - height/2 + height * 0.1;
 		  
-		  // 添加图片边框
-		  this.ctx.strokeStyle = '#e0e0e0';
-		  this.ctx.lineWidth = 2;
-		  this.ctx.strokeRect(imgX, imgY, imgWidth, imgHeight);
+		  // 绘制图片（带圆角）
+		  this.ctx.save();
+		  this.ctx.beginPath();
 		  
-		  // 绘制图片
+		  // 手动绘制图片的圆角裁剪区域
+		  const imgRadius = radius/2;
+		  this.ctx.moveTo(imgX + imgRadius, imgY);
+		  this.ctx.lineTo(imgX + imgWidth - imgRadius, imgY);
+		  this.ctx.arc(imgX + imgWidth - imgRadius, imgY + imgRadius, imgRadius, -Math.PI/2, 0);
+		  this.ctx.lineTo(imgX + imgWidth, imgY + imgHeight - imgRadius);
+		  this.ctx.arc(imgX + imgWidth - imgRadius, imgY + imgHeight - imgRadius, imgRadius, 0, Math.PI/2);
+		  this.ctx.lineTo(imgX + imgRadius, imgY + imgHeight);
+		  this.ctx.arc(imgX + imgRadius, imgY + imgHeight - imgRadius, imgRadius, Math.PI/2, Math.PI);
+		  this.ctx.lineTo(imgX, imgY + imgRadius);
+		  this.ctx.arc(imgX + imgRadius, imgY + imgRadius, imgRadius, Math.PI, -Math.PI/2);
+		  
+		  this.ctx.closePath();
+		  this.ctx.clip();
 		  this.ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
+		  this.ctx.restore();
 		} catch (e) {
 		  console.error('Error drawing image:', e);
 		}
@@ -118,70 +137,75 @@ export default class GameCarousel {
 	  
 	  // 绘制游戏名称
 	  this.ctx.fillStyle = '#333333';
-	  this.ctx.font = `${24 * this.settings.scale}px Arial`;
+	  this.ctx.font = `bold ${28 * this.pixelRatio}px Arial`;
 	  this.ctx.textAlign = 'center';
-	  this.ctx.fillText(game.name, x, y + height/2 - 30 * this.settings.scale);
+	  this.ctx.fillText(game.name, x, y + height * 0.2);
+	  
+	  // 绘制游戏描述
+	  this.ctx.fillStyle = '#666666';
+	  this.ctx.font = `${20 * this.pixelRatio}px Arial`;
+	  this.ctx.fillText(game.desc, x, y + height * 0.3);
+	  
+	  // 绘制装饰线
+	  this.ctx.strokeStyle = '#f0f0f0';
+	  this.ctx.lineWidth = 2 * this.pixelRatio;
+	  this.ctx.beginPath();
+	  this.ctx.moveTo(x - width * 0.4, y + height * 0.4);
+	  this.ctx.lineTo(x + width * 0.4, y + height * 0.4);
+	  this.ctx.stroke();
 	  
 	  this.ctx.restore();
-	}
-	
-	drawIndicators() {
-	  const dotRadius = 4 * this.settings.scale;
-	  const dotSpacing = 15 * this.settings.scale;
-	  const y = this.height - 50 * this.settings.scale;
-	  const totalWidth = (this.games.length * 2 * dotRadius) + ((this.games.length - 1) * dotSpacing);
-	  let x = this.centerX - totalWidth/2 + dotRadius;
-	  
-	  this.games.forEach((_, index) => {
-		this.ctx.beginPath();
-		this.ctx.fillStyle = index === this.currentIndex ? '#4CAF50' : '#cccccc';
-		this.ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
-		this.ctx.fill();
-		x += dotSpacing + 2 * dotRadius;
-	  });
 	}
 	
 	update() {
-	this.ctx.save();
 	  // 清除画布
-	  this.ctx.clearRect(0, 0, this.width, this.height);
+	  //this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	  
-	  // 绘制轮播图
-	  this.games.forEach((game, index) => {
-		const x = this.centerX + (index - this.currentIndex) * (this.CARD_WIDTH + this.CARD_SPACING) + this.currentOffset;
-		const distance = Math.abs(x - this.centerX);
-		const scale = Math.max(0.8, 1 - distance / (this.CARD_WIDTH * 2));
-		
-		// 只绘制可见的卡片
-		if (x + this.CARD_WIDTH/2 > 0 && x - this.CARD_WIDTH/2 < this.width) {
-		  this.drawGameCard(game, x, this.centerY, scale);
+	  // 只绘制当前图片
+	  const game = this.games[this.currentIndex];
+	  const x = this.centerX + this.currentOffset;
+	  
+	  // 绘制当前卡片
+	  this.drawGameCard(game, x, this.centerY, 1);
+	  
+	  // 保存按钮区域信息
+	  wx.globalData[game.key] = {
+		x: x - this.CARD_WIDTH/2,
+		y: this.centerY - this.CARD_HEIGHT/2,
+		width: this.CARD_WIDTH,
+		height: this.CARD_HEIGHT
+	  };
+	  this.startAutoPlay();
+	}
+	
+	startAutoPlay() {
+		if (!this.isDragging) {  // 只在非拖动状态下自动轮播
+			this.lastAutoPlayTime ++;
+		  	if (this.lastAutoPlayTime % 120 == 0){
+				console.log('自动轮播');
+				if (this.currentIndex < this.games.length - 1) {
+					this.currentIndex++;
+				} else {
+					this.currentIndex = 0;  // 循环到第一个
+				}
+			}
 		}
-		
-		// 保存按钮区域信息
-		wx.globalData[game.key] = {
-		  x: x - this.CARD_WIDTH/2,
-		  y: this.centerY - this.CARD_HEIGHT/2,
-		  width: this.CARD_WIDTH,
-		  height: this.CARD_HEIGHT
-		};
-	  });
-	  
-	  // 绘制指示点
-	  this.drawIndicators();
-	  this.ctx.restore();
 	}
 	
 	bindEvents() {
 	  wx.onTouchStart(e => {
 		this.startTouchX = e.touches[0].clientX;
 		this.isDragging = true;
+		this.startOffset = this.currentOffset;
+		
+		// 触摸时停止自动轮播
+		console.log('停止自动轮播');
 	  });
 	  
 	  wx.onTouchMove(e => {
 		if (!this.isDragging) return;
 		const deltaX = e.touches[0].clientX - this.startTouchX;
 		this.currentOffset = deltaX;
-		this.update();
 	  });
 	  
 	  wx.onTouchEnd(e => {
@@ -200,7 +224,12 @@ export default class GameCarousel {
 		}
 		
 		this.currentOffset = 0;
-		this.update();
+		console.log('重新开始自动轮播');
 	  });
+	}
+	
+	// 在组件销毁时调用
+	destroy() {
+	  this.stopAutoPlay();
 	}
   }
