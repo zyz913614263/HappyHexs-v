@@ -29,7 +29,7 @@ export default class GameCarousel {
 		{ name: '方块', image: 'res/images/teris.png', key: 'terisButton', desc: '俄罗斯方块' },
 		//{ name: '小蜜蜂', image: 'res/images/bee.png', key: 'beeButton', desc: '小蜜蜂' },
 		{ name: '飞机', image: 'res/images/plane.png', key: 'planeButton', desc: '飞机' },
-		{ name: '无人区', image: 'res/images/background.png', key: 'loadButton', desc: '无人区' },
+		{ name: '飞行的小鸟', image: 'res/images/background.png', key: 'loadButton', desc: '飞行的小鸟' },
 		//{ name: '探险', image: 'res/images/explore.png', key: 'exploreButton', desc: '探险' }
 	  ];
 	  
