@@ -1,132 +1,111 @@
-import { settings } from '../settings.js';
-import { Text, ButtonManager, randInt } from '../comon.js';
-import { audioManager } from '../entry/music.js'
-import loadDataBus from './load_databus.js';
+import './bird/libs/weapp-adapter'
+import Player from './bird/player/index'
+import Enemy from './bird/npc/enemy'
+import BackGround from './bird/runtime/background'
+import GameInfo from './bird/runtime/gameinfo'
+import DataBus from './bird/databus'
+import Enemy2 from './bird/npc/enemy2'
 
+let databus = new DataBus()
+let game = null
 
-let buttonManager = null;
-let ctx = null;
-let isPaused = false;
+/**
+ * 游戏主函数
+ */
+export default class Main {
+  constructor(canvas1,ctx1) {
+    this.canvas = canvas1
+    this.ctx = ctx1
+    this.restart()
+  }
+  
 
+  restart() {
+    databus.reset()
+    this.bg = new BackGround(this.ctx)
+    this.player = new Player(this.ctx)
+    this.gameinfo = new GameInfo()
+  }
 
-// 初始化游戏
-export function InitLoad(canvas, ctx1) {
-	//audioManager.play('bgm');
-	ctx = ctx1;
-	GameGlobal.databus = new loadDataBus(canvas);
-	 // 初始化重力游戏
+  /**
+   * 随着帧数变化的敌机生成逻辑
+   * 帧数取模定义成生成的频率
+   */
+  enemyGenerate() {
+    if (databus.frame % 120 === 0) {
+		this.player.score += 10
+		console.log('enemyGenerate')
+		let enemy = new Enemy()
+      	enemy.init(2)
+      	databus.enemys.push(enemy)
+		enemy = new Enemy2()
+      	enemy.init(2)
+      	databus.enemys.push(enemy)
+    }
+  }
 
-	 //GameGlobal.databus.gravityGame = new GravityGame(canvas);
-	 
+  // 全局碰撞检测
+  collisionDetection() {
+    for (let i = 0, il = databus.enemys.length; i < il; i++) {
+      let enemy = databus.enemys[i]
 
-	//game = new Main(canvas, ctx);
-	//game.loadGameState()
-	//game.player.maxScore = game.player.maxScore
-	
-	console.log('InitLoad',canvas.height,ctx)
-	wx.onTouchStart(handleTouch);
-	buttonManager = new ButtonManager();
-	// 初始化所有按钮
-	buttonManager.clear();
-	const canvasWidth = canvas.width / wx.globalData.currentPixelRatio;
-	const canvasHeight = canvas.height / wx.globalData.currentPixelRatio;
-	// 计算基础尺寸
-	const screenRatio = canvasWidth / canvasHeight;
-	const baseSize = Math.min(canvasWidth / 10, canvasHeight / 14);
-	const buttonWidth = baseSize * 2;
-	const buttonHeight = baseSize;
-	const horizontalSpacing = baseSize;
+      if (this.player.isCollideWith(enemy)) {
+        this.player.GameOver()
 
-	// 添加返回按钮 - 左上角
-	buttonManager.addButton(
-		'return',
-		baseSize * 0.5,
-		baseSize *0.5,
-		buttonWidth,
-		buttonHeight,
-		'返回',
-		{
-			backgroundColor: 'rgba(190, 243, 187, 0)',
-			textColor: '#bdc3c7',
-			fontSize: Math.floor(baseSize * 0.45),
-			onClick: () => {
-				wx.globalData.gameState = 999;
-				audioManager.stop('bgm');
-				isPaused = false
-			}
-		}
-	);
+        break
+      }
+    }
+  }
 
-	// 添加暂停按钮 - 返回按钮右侧
-	buttonManager.addButton(
-		'pause',
-		baseSize * 0.5 + buttonWidth + horizontalSpacing,
-		baseSize *0.5,
-		buttonWidth,
-		buttonHeight,
-		isPaused ? '继续' : '暂停',
-		{
-			backgroundColor: 'rgba(255, 165, 0, 0.8)',
-			hoverColor: 'rgba(255, 140, 0, 0.8)',
-			textColor: '#FFFFFF',
-			fontSize: Math.floor(baseSize * 0.45),
-			onClick: () => {
-				if (isPaused) {
-					isPaused = false;
-				} else {
-					isPaused = true;
-				}
-				const pauseButton = buttonManager.getButton('pause');
-				if (pauseButton) {
-					pauseButton.text = isPaused ? '继续' : '暂停';
-				}
-				audioManager.move();
-				//game.draw();
-			}
-		}
-	);
+  /**
+   * canvas重绘函数
+   * 每一帧重新绘制所有的需要展示的元素
+   */
+  render() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+
+    this.bg.render(this.ctx)
+    databus.enemys.forEach((item) => {
+      item.drawToCanvas(this.ctx)
+    })
+
+    this.player.draw(this.ctx)
+
+    /*databus.animations.forEach((ani) => {
+      if (ani.isPlaying) {
+        ani.aniRender(ctx)
+      }
+    })*/
+
+    this.gameinfo.renderGameScore(this.ctx, databus.score,this.player.score)
+  }
+
+  // 游戏逻辑更新主函数
+  update() {
+    databus.frame++
+    this.bg.update()
+    databus.enemys.forEach((item) => {
+      item.update()
+    })
+    this.player.update()
+    this.enemyGenerate()
+    this.collisionDetection()
+  }
+
+ 
 }
 
-// 游戏主循环
+export function InitLoad(canvas,ctx) {
+    game = new Main(canvas,ctx)
+    //load.restart()
+    //return load
+}
+ // 实现游戏帧循环
 export function animateLoad() {
-	if(isPaused) {
-		//return;
-	}
-	//console.log('animateLoad')
-	//game.loop();
-	// 绘制所有按钮
-	//game.update()
-	//game.render(ctx);
-	GameGlobal.databus.gravityGame.gameLoop();
-	//buttonManager.drawAll(ctx);
-}
-
-// 处理触摸事件
-export function handleTouch(e) {
-	//if (!game) return;
-
-	const touch = e.touches[0];
-	const x = touch.clientX;
-	const y = touch.clientY;
-	//console.log('handleBeeTouch',x,y)
-	buttonManager.handleClick(touch);
-
-	//if (game.gameState === GAME_STATE.GAME_OVER) {
-	//	game.handleRestart();
-	//	return;
-	//}
-	//const canvasWidth = ctx.canvas.width / wx.globalData.currentPixelRatio;
-
-	// 根据触摸位置判断移动方向
-	//位于player的左侧
-	/*if (x < canvasWidth/2) {
-		//console.log('left')
-		game.player.move('left');
-		audioManager.move();
-		console.log(game.player.visible)
-	} else  {
-		//console.log('right')
-		game.player.move('right');
-		audioManager.move();
-	}*/ 
-}
+    if (databus.gameOver) {
+      return
+    }
+    game.update()
+    game.render()
+  }
+//InitLoad,animateLoad
