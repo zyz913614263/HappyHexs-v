@@ -24,7 +24,7 @@ export default class GameCarousel {
 	  
 	  // 游戏配置
 	  this.games = [
-		//{ name: '分享', image: 'res/images/share1.png', key: 'mainShareButton', desc: '分享给好友' },
+		{ name: '分享', image: 'res/images/share1.png', key: 'mainShareButton', desc: '论坛链接' },
 		//{ name: '泡泡', image: 'res/images/logo.png', key: 'bubbleButton', desc: '经典泡泡龙' },
 		{ name: '方块', image: 'res/images/teris.png', key: 'terisButton', desc: '俄罗斯方块' },
 		//{ name: '小蜜蜂', image: 'res/images/bee.png', key: 'beeButton', desc: '小蜜蜂' },

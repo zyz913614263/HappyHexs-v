@@ -1,6 +1,6 @@
-import { settings } from "../settings";
-import { Block } from './teris/block'
-import { Matrix } from './teris/matrix'
+import { settings } from "../settings.js";
+import { Block } from './teris/block.js'
+import { Matrix } from './teris/matrix.js'
 import { audioManager } from '../entry/music'
 import { drawCircle } from '../comon.js';
 import { Button, ButtonManager } from '../comon.js';

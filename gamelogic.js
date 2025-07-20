@@ -338,7 +338,7 @@ function setStartScreen() {
         if (isButtonClicked(touch, wx.globalData.mainShareButton)) {
 			if (wx.globalData.gameState !== 0) return;
             // 分享游戏
-            wx.shareAppMessage({
+            /*wx.shareAppMessage({
                 title: '快乐六边形 - 考验反应力的休闲小游戏',
                 desc: '快来和我一起玩快乐六边形吧！',
                 imageUrl: 'res/images/share.png',
@@ -356,7 +356,18 @@ function setStartScreen() {
                         duration: 2000
                     });
                 }
-            });
+            });*/
+
+			wx.showModal({
+				title: '提示',
+				content: '链接需在浏览器打开，是否复制？',
+				success(res) {
+				  if (res.confirm) {
+					wx.setClipboardData({ data: "https://game.weixin.qq.com/cgi-bin/h5/lite/circlecenter/index.html?wechat_pkgid=lite_circlecenter&liteapp=liteapp%3A%2F%2Fwxalited17d79803d8c228a7eac78129f40484c%3Fpath%3Dpages%252Findex%252Findex&appid=wx79ef1796813d6ab0#wechat_redirect" });
+				  }
+				}
+			  });
+			
             return;
         }
         
