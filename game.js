@@ -5,7 +5,9 @@ wx.onShow(() => {
     console.log('游戏启动');
 });
 
-
+wx.showShareMenu({
+    menus: ['shareAppMessage', 'shareTimeline']
+  })
 requestAnimationFrame(animLoop);
 gameinit()
 
