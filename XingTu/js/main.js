@@ -165,7 +165,7 @@ class Main extends Laya.Sprite {
 
         // 绑定游戏事件
         window._Event.on('dead', (res) => {
-            console.error(Date.now() - res);
+            console.log(Date.now() - res);
             this.renderResult(res);
         });
 

@@ -61,7 +61,7 @@ export class Game {
 			this.block.updateDown(this.speed)
 			this.gap = 30
 		} else if (this.gap > 0) {
-			this.gap --
+			this.gap--
 		} else {
 			this.mergeBlock()
 			this.checkLines()
@@ -75,11 +75,11 @@ export class Game {
 		drawBackground();
 
 		// 绘制游戏区域
-		this.matrix.render(this.ctx,this.block)
-		
+		this.matrix.render(this.ctx, this.block)
+
 		// 绘制下一个方块
 		this.renderNextBlock()
-		
+
 		// 绘制分数和等级
 		this.renderScore()
 	}
@@ -88,51 +88,51 @@ export class Game {
 		this.ctx.save()
 		this.ctx.fillStyle = '#000'
 		this.ctx.font = '20px Arial'
-		const X = this.canvas.width/wx.globalData.currentPixelRatio-BlockSize*5;
-		const Y = BlockSize*4;
-		this.ctx.fillText('分数：', X, Y+BlockSize*2)
+		const X = this.canvas.width / wx.globalData.currentPixelRatio - BlockSize * 5;
+		const Y = BlockSize * 4;
+		this.ctx.fillText('分数：', X, Y + BlockSize * 2)
 		this.ctx.fillStyle = '#F87'
-		this.ctx.fillText(this.score, X, Y+BlockSize*4)
+		this.ctx.fillText(this.score, X, Y + BlockSize * 4)
 		this.ctx.fillStyle = '#000'
-		this.ctx.fillText('等级：' + this.level, X, Y+BlockSize*6)
-		this.ctx.fillText('最高分：' , X, Y+BlockSize*8)
+		this.ctx.fillText('等级：' + this.level, X, Y + BlockSize * 6)
+		this.ctx.fillText('最高分：', X, Y + BlockSize * 8)
 		this.ctx.fillStyle = '#F87'
-		this.ctx.fillText(this.maxScore, X, Y+BlockSize*10)
+		this.ctx.fillText(this.maxScore, X, Y + BlockSize * 10)
 		this.ctx.fillStyle = '#000'
-		this.ctx.fillText('下一个：', X, Y+BlockSize*12)
-		this.renderNextBlock(X,Y+BlockSize*14)
+		this.ctx.fillText('下一个：', X, Y + BlockSize * 12)
+		this.renderNextBlock(X, Y + BlockSize * 14)
 		this.ctx.restore()
 	}
 
-	renderNextBlock(X,Y) {
+	renderNextBlock(X, Y) {
 		if (this.nextBlock) {
-		// 保存当前上下文状态
-		this.nextBlock.renderNext(this.ctx,BlockSize,X,Y)
+			// 保存当前上下文状态
+			this.nextBlock.renderNext(this.ctx, BlockSize, X, Y)
 		}
 	}
 
 	moveBlockLeft() {
 		if (this.canBlockMove(this.block, -1, 0)) {
-		this.block.moveLeft()
-		audioManager.move2();
+			this.block.moveLeft()
+			audioManager.move2();
 		}
 	}
 
 	moveBlockRight() {
 		if (this.canBlockMove(this.block, 1, 0)) {
-		this.block.moveRight()
-		audioManager.move2();
+			this.block.moveRight()
+			audioManager.move2();
 		}
 	}
 
 	moveBlockDown() {
 		let maxIndex = 0
-		for (let i = 0; i<=20; i++) {
+		for (let i = 0; i <= 20; i++) {
 			if (this.canBlockMove(this.block, 0, i)) {
 				maxIndex = i
 				//audioManager.move2();
 				//break;
-			}else{
+			} else {
 				break;
 			}
 		}
@@ -167,14 +167,14 @@ export class Game {
 	updateScore(lines) {
 		const scores = [0, 100, 300, 700, 1500]
 		this.score += scores[lines]
-		
+
 		// 更新等级
 		const newLevel = Math.floor(this.score / 1000) + 1
 		if (newLevel !== this.level) {
-		this.level = newLevel
-		this.speed = Math.max(20,60 - (this.level - 1) * 5)
+			this.level = newLevel
+			this.speed = Math.max(20, 60 - (this.level - 1) * 5)
 		}
-		
+
 		this.saveGameState()
 	}
 
@@ -183,22 +183,22 @@ export class Game {
 			this.maxScore = this.score
 		}
 		wx.setStorage({
-		key: 'tetris_state',
-		data: {
-			maxScore: this.maxScore,
-		}
+			key: 'tetris_state',
+			data: {
+				maxScore: this.maxScore,
+			}
 		})
 	}
 
 	loadGameState() {
 		wx.getStorage({
-		key: 'tetris_state',
-		success: (res) => {
-			const { maxScore } = res.data
-			if (maxScore!=null && maxScore!=undefined) {
-				this.maxScore = maxScore
+			key: 'tetris_state',
+			success: (res) => {
+				const { maxScore } = res.data
+				if (maxScore != null && maxScore != undefined) {
+					this.maxScore = maxScore
+				}
 			}
-		}
 		})
 	}
 
@@ -214,36 +214,36 @@ export class Game {
 		audioManager.start2();
 	}
 
-  pause() {
-    this.isPaused = true
-  }
+	pause() {
+		this.isPaused = true
+	}
 
-  resume() {
-    this.isPaused = false
-  }
-} 
+	resume() {
+		this.isPaused = false
+	}
+}
 
 
 
 function InitTeris(c, ctxs) {
 	canvas = c
 	context = ctxs;
-	BlockSize = context.canvas.width/wx.globalData.currentPixelRatio/17;
-		
+	BlockSize = context.canvas.width / wx.globalData.currentPixelRatio / 17;
+
 	// 替换触摸事件处理函数
 	wx.onTouchStart(handleTouch);
 
 	game = new Game(canvas, context);
-	
+
 	audioManager.start2();
-	
-	console.log('Init',canvas.width,canvas.height,BlockSize,wx.globalData.currentPixelRatio);
+
+	console.log('Init', canvas.width, canvas.height, BlockSize, wx.globalData.currentPixelRatio);
 }
 
 // 修改触摸事件处理函数
 function handleTouch(e) {
 	const touch = e.touches[0];
-	
+
 	// 检查是否点击了返回按钮
 	const returnButton = buttonManager.getButton('return');
 	if (returnButton && returnButton.isClicked(touch)) {
@@ -304,7 +304,7 @@ const buttonManager = new ButtonManager();
 function drawBackground() {
 	const canvasWidth = context.canvas.width / wx.globalData.currentPixelRatio;
 	const canvasHeight = context.canvas.height / wx.globalData.currentPixelRatio;
-	
+
 	context.fillStyle = 'rgb(44, 93, 93)';
 	context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -366,14 +366,14 @@ function drawBackground() {
 	const controlStartX = (canvasWidth - controlAreaWidth) / 2; // 控制区域起始X坐标
 
 	// 第一排按钮 Y 坐标（更靠下）
-	const firstRowY = canvasHeight - bottomPadding - buttonHeight*1.5  - verticalSpacing;
+	const firstRowY = canvasHeight - bottomPadding - buttonHeight * 1.5 - verticalSpacing;
 	// 第二排按钮 Y 坐标（更靠下）
 	const secondRowY = canvasHeight - bottomPadding - buttonHeight;
 
 	// 左移按钮（第一排左）
 	buttonManager.addButton(
 		'left',
-		controlStartX - buttonWidth ,  // 向左移动一个按钮宽度加间距
+		controlStartX - buttonWidth,  // 向左移动一个按钮宽度加间距
 		firstRowY,
 		buttonWidth,
 		buttonHeight,
@@ -427,10 +427,10 @@ function drawBackground() {
 	// 旋转按钮（第二排右）
 	buttonManager.addButton(
 		'rotate',
-		controlStartX + buttonWidth*2 + horizontalSpacing,
-		secondRowY-buttonHeight,
+		controlStartX + buttonWidth * 2 + horizontalSpacing,
+		secondRowY - buttonHeight,
 		buttonWidth,
-		buttonHeight*1.5,
+		buttonHeight * 1.5,
 		'旋转',
 		{
 			backgroundColor: 'rgb(255, 0, 0)',
@@ -460,7 +460,7 @@ function drawBackground() {
 		context.save();
 		context.fillStyle = 'rgba(0, 0, 0, 0.5)';
 		context.fillRect(0, 0, canvasWidth, canvasHeight);
-		
+
 		const pauseTextSize = baseSize * 0.8;
 		context.font = `bold ${pauseTextSize}px Arial`;
 		context.fillStyle = '#FFFFFF';
@@ -478,4 +478,4 @@ function animateTreis() {
 	}
 }
 
-export {animateTreis,InitTeris}
+export { animateTreis, InitTeris }
