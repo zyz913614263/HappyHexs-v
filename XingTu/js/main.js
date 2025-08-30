@@ -22,7 +22,6 @@ import PkRank from './pk.js';
 
 // 游戏常量
 const IN_SIDE_EDGE_DISTANCE = 30 * window.devicePixelRatio; // 边界判断距离
-const SPEED = 0.3 * window.devicePixelRatio;
 
 // 私有属性符号
 const privateProps = {
@@ -84,7 +83,7 @@ class Main extends Laya.Sprite {
     getFriendData(callback) {
         this._friendData = {};
 
-        getFriendRank({
+        /*getFriendRank({
             appid: gameConfig.APPID,
             rank_key_list: ['level', 'newscore', 'combo', 'baoshi']
         }).then(res => {
@@ -110,7 +109,7 @@ class Main extends Laya.Sprite {
 
             this._friendData = data;
             callback && callback();
-        });
+        });*/
     }
 
     /**

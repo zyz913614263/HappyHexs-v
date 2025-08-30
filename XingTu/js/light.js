@@ -77,7 +77,7 @@ class Light extends Laya.Sprite {
      */
     createTextImage() {
         this.txtImg = new Laya.Image();
-        this.txtImg.skin = 'res/light/text.png';
+        this.txtImg.skin = `${gameConfig.LOCAL_URL}/light/text.png`;
         this.txtImg.width *= LIGHT_CONSTANTS.TEXT_SCALE;
         this.txtImg.height *= LIGHT_CONSTANTS.TEXT_SCALE;
 
@@ -173,7 +173,7 @@ class Light extends Laya.Sprite {
 
         // 加载光效图片
         this.sp.graphics.loadImage(
-            `res/light/${this._turnedSelfIndex}.png`,
+            `${gameConfig.LOCAL_URL}/light/${this._turnedSelfIndex}.png`,
             LIGHT_CONSTANTS.LIGHT_IMAGE_OFFSET_X,
             LIGHT_CONSTANTS.LIGHT_IMAGE_OFFSET_Y,
             this.txtImg.width * LIGHT_CONSTANTS.LIGHT_IMAGE_SCALE,

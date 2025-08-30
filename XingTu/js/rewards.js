@@ -30,7 +30,7 @@ const REWARDS_CONSTANTS = {
 // 星球配置列表
 const PLANET_LIST = [
     {
-        url: 'res/rewards/1.png',
+        url: `${gameConfig.LOCAL_URL}/rewards/1.png`,
         radius: 418 / 4,
         correction: { x: 0, y: 0 },
         img: {
@@ -40,7 +40,7 @@ const PLANET_LIST = [
         }
     },
     {
-        url: 'res/rewards/3.png',
+        url: `${gameConfig.LOCAL_URL}/rewards/3.png`,
         radius: 518 / 4,
         correction: { x: 0, y: 0 },
         img: {
@@ -208,7 +208,7 @@ class Rewards extends Laya.Sprite {
 
         // 加载结果背景
         txtSp.graphics.loadImage(
-            'res/rewards/2.png',
+            `${gameConfig.LOCAL_URL}/rewards/2.png`,
             0, 0,
             REWARDS_CONSTANTS.IMG_TXT_WIDTH,
             REWARDS_CONSTANTS.IMG_TXT_HEIGHT
@@ -218,7 +218,7 @@ class Rewards extends Laya.Sprite {
         const numStr = num.toString().split('');
         for (let i = 0; i < numStr.length; i++) {
             txtSp.graphics.loadImage(
-                `res/combos/3/${numStr[i]}.png`,
+                `${gameConfig.LOCAL_URL}/combos/3/${numStr[i]}.png`,
                 REWARDS_CONSTANTS.IMG_TXT_WIDTH / 1.5 + REWARDS_CONSTANTS.IMG_NUM_WIDTH * i / 1.5,
                 0,
                 REWARDS_CONSTANTS.IMG_NUM_WIDTH,
@@ -556,7 +556,7 @@ class Rewards extends Laya.Sprite {
      * 初始化背景
      */
     initBackground() {
-        const backGround = new BackGround('res/rewards/bg.png', '', 2 * window.devicePixelRatio);
+        const backGround = new BackGround(`${gameConfig.LOCAL_URL}/rewards/bg.png`, '', 2 * window.devicePixelRatio);
         this.addChild(backGround);
         this._backGround = backGround;
     }

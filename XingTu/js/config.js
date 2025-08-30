@@ -342,7 +342,7 @@ const gameConfig = {
     // 资源URL前缀
     PREFIX_URL: 'XingTu/res/',
     LOCAL_URL: 'XingTu/res',
-    APPID: 'wx7a727ff7d940bb3f',
+    APPID: 'wx79ef1796813d6ab0',
 };
 
 function getRandomNumber(max, step) {

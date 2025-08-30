@@ -1,4 +1,5 @@
 import { gameConfig } from "./config.js";
+import AirPlane from "./airplane.js";
 // 导入依赖模块
 //const config = __webpack_require__(0);
 
@@ -27,7 +28,7 @@ const SCALED_DIMENSIONS = {
 };
 
 // 获取引导状态
-var guideStatus = wx.getStorageSync('guide');
+var guideStatus = 0// wx.getStorageSync('guide');
 let guideClick = guideStatus;
 
 /**
@@ -100,10 +101,10 @@ class GuideControls {
 
     /**
      * 显示引导第一步
-     * @param {Object} plant - 星球对象
+     * @param {AirPlane} plant - 星球对象
      */
     showGuideStep1(plant) {
-        if (this._guide && guideStatus !== '1' && guideStatus !== '2' && plant._rotation > 75) {
+        if (this._guide && guideStatus !== '1' && guideStatus !== '2' && plant._rotation > 70) {
             this.status = true;
             this._guide.visible = true;
 
@@ -121,7 +122,7 @@ class GuideControls {
 
     /**
      * 显示引导第二步
-     * @param {Object} plant - 星球对象
+     * @param {AirPlane} plant - 星球对象
      */
     showGuideStep2(plant) {
         if (this._guide && guideStatus !== '2' && plant._rotation > 145) {
@@ -243,7 +244,7 @@ class Guide extends Laya.Sprite {
      */
     drawHand() {
         const img = new Laya.Image();
-        img.skin = 'res/hand.png';
+        img.skin = `${gameConfig.LOCAL_URL}/hand.png`;
         img.width = SCALED_DIMENSIONS.width;
         img.height = SCALED_DIMENSIONS.height;
         img.pos((gameConfig.GameWidth - SCALED_DIMENSIONS.width) / 2,
@@ -295,7 +296,7 @@ class Guide extends Laya.Sprite {
      */
     drawCircle() {
         const img = new Laya.Image();
-        img.skin = 'res/circle.png';
+        img.skin = `${gameConfig.LOCAL_URL}/circle.png`;
         img.width = 108 / 3 * window.devicePixelRatio;
         img.height = 108 / 3 * window.devicePixelRatio;
         img.pivot(img.width / 2, img.height / 2);
@@ -326,7 +327,7 @@ class Guide extends Laya.Sprite {
      */
     drawNeiCircle() {
         const img = new Laya.Image();
-        img.skin = 'res/circle_nei.png';
+        img.skin = `${gameConfig.LOCAL_URL}/circle_nei.png`;
         img.width = 88 / 3 * window.devicePixelRatio;
         img.height = 88 / 3 * window.devicePixelRatio;
         img.pivot(img.width / 2, img.height / 2);

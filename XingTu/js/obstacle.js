@@ -1,5 +1,5 @@
 // 导入依赖模块
-
+import { gameConfig } from "./config.js";
 // 游戏常量
 const OBSTACLE_CONSTANTS = {
     ZOOM: 4,
@@ -145,7 +145,7 @@ class ObstaclePoint extends Laya.Sprite {
     renderUI() {
         // 加载云朵背景
         this.graphics.loadImage(
-            'res/qiu/yun.png',
+            `${gameConfig.LOCAL_URL}/qiu/yun.png`,
             0, 0,
             OBSTACLE_CONSTANTS.IMG_SIZE.width,
             OBSTACLE_CONSTANTS.IMG_SIZE.height
@@ -165,7 +165,7 @@ class ObstaclePoint extends Laya.Sprite {
         };
 
         this.graphics.loadImage(
-            'res/0e10aaa60c459c91d5022bcdf2e5b822.png',
+            `${gameConfig.LOCAL_URL}/0e10aaa60c459c91d5022bcdf2e5b822.png`,
             -OBSTACLE_CONSTANTS.IMG_SIZE.width / 2,
             -OBSTACLE_CONSTANTS.IMG_SIZE.height / 2,
             meteorSize.width,
