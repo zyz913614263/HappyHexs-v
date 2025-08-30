@@ -1,4 +1,5 @@
 // 导出所有工具函数
+import {gameConfig} from './config.js';
 
 // 离屏画布缓存
 let offScreenCanvas;
@@ -141,7 +142,7 @@ function strlen(str, s_len) {
  * @returns {number} 哈希签名
  */
 function getSig(data) {
-    const appId = 'wx7a727ff7d940bb3f';
+    const appId = gameConfig.APPID;
     let str = appId;
 
     // 将数据转换为签名字符串

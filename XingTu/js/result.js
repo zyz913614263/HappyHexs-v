@@ -101,7 +101,7 @@ class Result extends Laya.Sprite {
             return;
         }
         getFriendRank({
-            appid: 'wx7a727ff7d940bb3f',
+            appid: gameConfig.APPID,
             rank_key_list: ['newscore', 'combo', 'baoshi']
         }).then(function (res) {
             if (res.errcode === 0) {
@@ -433,7 +433,7 @@ class Result extends Laya.Sprite {
         window._shareInfo.success = function () {
             if (that.room_id) {
                 (0, reportPKRank)({
-                    appid: 'wx7a727ff7d940bb3f',
+                    appid: gameConfig.APPID,
                     game_behav_list: data,
                     sig: getSig(data)
                 }).then(function (res) {
@@ -461,7 +461,7 @@ class Result extends Laya.Sprite {
         }
 
         createPkRoom({
-            appid: 'wx7a727ff7d940bb3f',
+            appid: gameConfig.APPID,
             my_behav_list: data,
             sig: getSig(data)
         }).then(function (res) {

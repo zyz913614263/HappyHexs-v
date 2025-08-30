@@ -85,7 +85,7 @@ class Main extends Laya.Sprite {
         this._friendData = {};
 
         getFriendRank({
-            appid: 'wx7a727ff7d940bb3f',
+            appid: gameConfig.APPID,
             rank_key_list: ['level', 'newscore', 'combo', 'baoshi']
         }).then(res => {
             window._allFriendData = res.data || {};

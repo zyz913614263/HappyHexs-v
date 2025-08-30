@@ -1,17 +1,17 @@
 import login from './login.js';
 import Promise from '../libs/es6-promise.js';
+import { gameConfig } from './config.js';
 
 // 应用实例
 const app = {};
 
 // API配置
 const FETCH_URL = 'https://game.weixin.qq.com/cgi-bin/gametetrisws/';
-const APPID = 'wxb44e2096fe38c90d';
 
 
 // 微信小程序配置
 const Config = {
-    appid: 'wx7a727ff7d940bb3f',
+    appid: gameConfig.APPID,
     app_name: '星轨',           // 小程序的名称
     weapp_type: 10,            // 业务登录唯一ID
     expiredLoginCodeMap: []    // 过期的登录码映射

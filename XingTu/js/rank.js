@@ -302,7 +302,7 @@ class Rank extends Laya.Sprite {
             return;
         }
         getFriendRank({
-            appid: 'wx7a727ff7d940bb3f',
+            appid: gameConfig.APPID,
             rank_key_list: ['newscore', 'combo', 'baoshi']
         }).then(function (res) {
             if (res.errcode === 0) {

@@ -1,4 +1,4 @@
-//import { gameinit, animLoop } from './gamelogic.js';
+
 import "./XingTu/libs/weapp-adapter.js";
 import "./XingTu/libs/laya.core.js";
 import "./XingTu/libs/laya.wxmini.js";
@@ -8,16 +8,13 @@ import "./XingTu/libs/laya.filter.js";
 import "./XingTu/libs/laya.ui.js";
 import { gameConfig, infoList } from "./XingTu/js/config.js";
 const protobuf = require('./XingTu/libs/protobuf.js');
+const EventEmitter = protobuf.util.EventEmitter;
 import { MeteroManager } from './XingTu/js/metero.js';
 import Main from './XingTu/js/main.js';
 import Coordinate from './XingTu/js/coordinate.js';
-
+import { BackGround, Loading } from './XingTu/js/background.js';
+//import { gameinit, animLoop } from './gamelogic.js';
 if (true) {
-
-
-	const EventEmitter = protobuf.util.EventEmitter;
-
-
 
 	window._shareInfo = {
 		title: '星途，穿越未知银河道途',
@@ -45,75 +42,6 @@ if (true) {
 	wx.onShareAppMessage && wx.onShareAppMessage(function () {
 		return window._shareInfo;
 	});
-	console.log("RUN")
-	console.log(gameConfig)
-	console.log(infoList)
-	// 初始化 Laya 引擎
-
-	Laya.MiniAdpter.init();
-
-
-
-	// Laya.Config.isAntialias = true;
-	// 0：正常，1：结果， 2：好友排行， 3：群排行， 4：pk
-	window._game_status = 0;
-
-	Laya.init(gameConfig.GameWidth, gameConfig.GameHeight, Laya.WebGL);
-
-	//musicInstance.playBg()
-	//musicInstance.playStart();
-
-	var scaleX = window.innerWidth * window.devicePixelRatio / gameConfig.GameWidth;
-	var scaleY = window.innerHeight * window.devicePixelRatio / gameConfig.GameHeight;
-
-	//设置适配模式
-	Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
-	Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
-	Laya.stage.scaleMode = scaleY > scaleX ? Laya.Stage.SCALE_FIXED_WIDTH : Laya.Stage.SCALE_FIXED_HEIGHT;
-	Laya.stage.screenMode = gameConfig.model;
-	Laya.stage.bgColor = "#000";
-	Laya.Stat.show(0, 0);
-
-	class Loading extends Laya.Sprite {
-		constructor() {
-			super();
-			this.init();
-		}
-
-		init() {
-			this.renderBg();
-			this.createText();
-			// this.cacheAs = 'bitmap';
-		}
-
-		renderBg() {
-			this.graphics.drawRect(0, 0, gameConfig.GameWidth, gameConfig.GameHeight, "#000000");
-		}
-
-		createText() {
-			const title = new Laya.Sprite();
-
-			const text = new Laya.Text();
-			text.overflow = Laya.Text.HIDDEN;
-			text.color = "#82b9c7";
-			text.fontSize = 14 * window.devicePixelRatio;
-			text.text = '拼命加载中...';
-			title.addChild(text);
-
-			const width = title.getBounds().width;
-			title.x = (gameConfig.GameWidth - width) / 2;
-			title.y = (gameConfig.GameHeight - title.getBounds().height) / 2;
-
-			this.addChild(title);
-		}
-	}
-
-	window._loading = new Loading();
-	window.stage = Laya.stage;
-	window.stage.addChild(window._loading);
-
-	window._Event = new EventEmitter();
-
 	function getPreLoadResource() {
 		const res = gameConfig.LOCAL_URL
 		console.log(res)
@@ -191,6 +119,44 @@ if (true) {
 
 	}
 
+	console.log("RUN")
+	console.log(gameConfig)
+	console.log(infoList)
+	// 初始化 Laya 引擎
+
+	Laya.MiniAdpter.init();
+
+
+
+	// Laya.Config.isAntialias = true;
+	// 0：正常，1：结果， 2：好友排行， 3：群排行， 4：pk
+	//window._game_status = 0;
+
+	Laya.init(gameConfig.GameWidth, gameConfig.GameHeight, Laya.WebGL);
+
+	//musicInstance.playBg()
+	//musicInstance.playStart();
+
+	var scaleX = window.innerWidth * window.devicePixelRatio / gameConfig.GameWidth;
+	var scaleY = window.innerHeight * window.devicePixelRatio / gameConfig.GameHeight;
+
+	//设置适配模式
+	Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
+	Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
+	Laya.stage.scaleMode = scaleY > scaleX ? Laya.Stage.SCALE_FIXED_WIDTH : Laya.Stage.SCALE_FIXED_HEIGHT;
+	Laya.stage.screenMode = gameConfig.model;
+	Laya.stage.bgColor = "#000";
+	//Laya.Stat.show(0, 0);
+
+
+
+	window._loading = new Loading();
+	window.stage = Laya.stage;
+	window.stage.addChild(window._loading);
+
+	window._Event = new EventEmitter();
+
+
 	var urls = getPreLoadResource();
 	var _time = Date.now();
 
@@ -205,87 +171,6 @@ if (true) {
 		loadStaticDataLazy()
 	}
 
-	class BackGround extends Laya.Sprite {
-		constructor() {
-			super();
-
-			this.width = gameConfig.GameWidth;
-			this.height = gameConfig.GameHeight;
-			this.SPEED = 3 * window.devicePixelRatio;
-
-			this.init();
-		}
-
-		init() {
-			this.renderBg();
-			this.renderCycleBg();
-			this.renderCycleBg2();
-		}
-
-		renderBg() {
-			const bgImg = new Laya.Image();
-			const res = gameConfig.LOCAL_URL
-			bgImg.skin = res + '/new_bg1.png';
-
-			bgImg.height = gameConfig.GameWidth / (bgImg.width / bgImg.height);
-			bgImg.width = gameConfig.GameWidth;
-
-			this.y = gameConfig.GameHeight - bgImg.height;
-
-			this.addChild(bgImg);
-		}
-
-		renderCycleBg() {
-			const bgImg = new Laya.Image();
-			const res = gameConfig.LOCAL_URL
-			bgImg.skin = res + '/bg1.png';
-
-			bgImg.height = gameConfig.GameWidth / (bgImg.width / bgImg.height);
-			bgImg.width = gameConfig.GameWidth;
-
-			this.bgImgHeight = -bgImg.height + 1;
-			bgImg.y = this.bgImgHeight;
-
-			this.bg1 = bgImg;
-
-			this.addChild(bgImg);
-		}
-
-		renderCycleBg2() {
-			const bgImg = new Laya.Image();
-			const res = gameConfig.LOCAL_URL
-			bgImg.skin = res + '/bg1.png';
-
-			bgImg.height = gameConfig.GameWidth / (bgImg.width / bgImg.height);
-			bgImg.width = gameConfig.GameWidth;
-
-			this.bgImgHeight = -bgImg.height + 1;
-
-			bgImg.y = this.bgImgHeight * 2;
-			this.bg2 = bgImg;
-
-			this.addChild(bgImg);
-		}
-
-		animation() {
-			if (this.bg1.y + this.y >= -this.bgImgHeight) {
-				this.bg1.y += this.bgImgHeight * 2;
-			}
-			if (this.bg2.y + this.y >= -this.bgImgHeight) {
-				this.bg2.y += this.bgImgHeight * 2;
-			}
-
-			this.y += this.SPEED;
-		}
-
-		stop() {
-			Laya.timer.clear(this, this.animation);
-		}
-
-		start() {
-			Laya.timer.frameLoop(1, this, this.animation);
-		}
-	}
 
 	function mainDraw() {
 		if (window.Main) {

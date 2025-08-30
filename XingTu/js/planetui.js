@@ -175,7 +175,8 @@ class PlanetUI extends Laya.Sprite {
         const planet = block.blockInfo;
 
         // 设置星球图片
-        if (/^res\/rewards/i.test(planet.url)) {
+        //if (/^res\/rewards/i.test(planet.url)) {
+        if (planet.url.includes('rewards')) {
             // 奖励类星球
             this.planetImage.skin = planet.url;
         } else if (planet.url === 'hei') {

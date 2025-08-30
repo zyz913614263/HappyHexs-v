@@ -340,7 +340,7 @@ class PkRank extends Laya.Sprite {
             return;
         }
         var data = {
-            appid: 'wx7a727ff7d940bb3f',
+            appid: gameConfig.APPID,
             room_id: this.room_id,
             share_user_openid: this.share_user_openid
         };

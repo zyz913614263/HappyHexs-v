@@ -368,7 +368,7 @@ class Coordinate extends Laya.Sprite {
         }];
 
         const params = {
-            appid: 'wx7a727ff7d940bb3f',
+            appid: gameConfig.APPID,
             game_behav_list: data,
             sync_type: window._pk_user_game_id ? 2 : 1,
             sig: getSig(data),
