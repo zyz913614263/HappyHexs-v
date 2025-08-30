@@ -12,9 +12,5 @@
     "scope.userLocation": {
       "desc": "你的位置信息将用于游戏内地图展示"
     }
-  },
-  "res": {
-    "music": "res/music/",
-    "image": "res/images"
   }
 }
