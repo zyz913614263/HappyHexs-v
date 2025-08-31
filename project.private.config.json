@@ -3,6 +3,7 @@
   "projectname": "HappyHexs-v",
   "libVersion": "3.8.11",
   "setting": {
-    "urlCheck": false
+    "urlCheck": false,
+    "useStaticServer": false
   }
 }

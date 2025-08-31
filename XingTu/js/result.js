@@ -43,8 +43,8 @@ class Result extends Laya.Sprite {
     initUI() {
         this.renderBg();
         this.renderStartBtn();
-        this.renderShareBtn();
-        this.renderRankBtn();
+        //this.renderShareBtn();
+        //this.renderRankBtn();
         this.renderShareText();
         this.bind();
 

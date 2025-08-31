@@ -25,5 +25,8 @@
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
+  },
+  "staticServerOptions": {
+    "servePath": "XingTu\\res"
   }
 }

@@ -20,7 +20,7 @@ function draw(config, type) {
 
     // 如果要绘制一个圆，使用下面代码
     var img = new Image();
-    img.src = type === 1 ? 'res/share/pk.png' : 'res/share/share.png';
+    img.src = type === 1 ? `${gameConfig.LOCAL_URL}/share/pk.png` : `${gameConfig.LOCAL_URL}/share/share.png`;
     offScreenContext.drawImage(img, 0, 0, bgWidth, 335 * window.devicePixelRatio);
 
     if (type === 1) {
@@ -54,11 +54,11 @@ function commonShareImage(config, offScreenContext) {
     var widthImg = 258 / 1.4 * window.devicePixelRatio;
     var heightImg = 67 / 1.4 * window.devicePixelRatio;
     var img = new Image();
-    img.src = 'res/share/baoshi.png';
+    img.src = `${gameConfig.LOCAL_URL}/share/baoshi.png`;
     offScreenContext.drawImage(img, 15 * window.devicePixelRatio, height, widthImg, heightImg);
 
     var img = new Image();
-    img.src = 'res/share/combo.png';
+    img.src = `${gameConfig.LOCAL_URL}/share/combo.png`;
     offScreenContext.drawImage(img, widthImg + 30 * window.devicePixelRatio, height, widthImg, heightImg);
 
     offScreenContext.font = "bold " + 36 * window.devicePixelRatio + "px Agency FB Bold";

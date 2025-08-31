@@ -1,29 +1,31 @@
 
 // 初始化游戏
-import './libs/weapp-adapter.js'
+//import './libs/weapp-adapter.js'
 import { settings, colors, randInt, drawPolygon } from './settings.js';
 import Hex from './entry/Hex.js';
 import blockGen from './entry/wavegen.js';
-import {findCenterOfBlocks} from './entry/Block.js';
+import { findCenterOfBlocks } from './entry/Block.js';
 import { audioManager } from './entry/music.js';
 import { getHighScore, saveHighScore } from './storage/localstorage.js';
-import {drawRoundRect,renderText,Text} from './comon.js';
+import { drawRoundRect, renderText, Text } from './comon.js';
 import { drawGameOver } from './pages/game-over-page.js';
-import { drawStartScreen,touchPop, touchTeris,touchBee,touchPlane } from './pages/game-login-page.js';
+import { drawStartScreen, touchPop, touchTeris, touchBee, touchPlane } from './pages/game-login-page.js';
 import { render } from './pages/game-run-page.js';
 import { animate } from './pages/bubales.js';
 import { animateTreis } from './pages/teris.js';
 import { animateBee } from './pages/bee.js';
-import { animatePlane } from './pages/plane.js';
-import { InitLoad,animateLoad } from './pages/load.js';
-import { InitExplore,animateExplore } from './pages/explore.js';
+import { InitLoad, animateLoad } from './pages/load.js';
+import { InitExplore, animateExplore } from './pages/explore.js';
 const tt = wx
-console.log('game.js 导入的 settings:', settings,settings.blockHeight);
+console.log('game.js 导入的 settings:', settings, settings.blockHeight);
+if (!wx.globalData) {
+	wx.globalData = {};
+}
 //初始化
 wx.globalData.rush = 1; //游戏速度，越大越快 建议1
 wx.globalData.lastTime = 0;
 wx.globalData.iframHasLoaded = false
-wx.globalData.hexColorsToTintedColors={
+wx.globalData.hexColorsToTintedColors = {
 	"#e74c3c": "rgb(241,163,155)",
 	"#f1c40f": "rgb(246,223,133)",
 	"#3498db": "rgb(151,201,235)",
@@ -68,8 +70,8 @@ wx.globalData.gameState;
 wx.globalData.highScore = 0;
 wx.globalData.gameState = 0;//0: 未开始, 1: 游戏中, 2: 游戏结束 
 // 创建画布
-const canvas = wx.globalData.canvas || wx.createCanvas()
-const ctx = canvas.getContext('2d')
+var canvas = wx.globalData.canvas || wx.createCanvas()
+var ctx = canvas.getContext('2d')
 wx.globalData.ctx = ctx;
 //wx.globalData.canvas = canvas
 // 获取系统信息
@@ -145,27 +147,27 @@ function scaleCanvas() {
 function gameinit() {
 	const highScore = getHighScore();
 	wx.globalData.highScore = highScore;
-    console.log('历史最高分:', highScore);
+	console.log('历史最高分:', highScore);
 	//initUserInfo()
 	//initFeedCard();
 	audioManager.initAudioWithDelay();
 	// 设置全局对象
 	if (!wx.globalData.requestAnimationFrame) {
-		wx.globalData.requestAnimationFrame = wx.requestAnimationFrame || 
+		wx.globalData.requestAnimationFrame = wx.requestAnimationFrame ||
 			(callback => setTimeout(callback, 1000 / 60))
 	}
 	scaleCanvas()
 	console.log('init');
-	
+
 	wx.globalData.score = 0;
 	wx.globalData.gameState = 0;
 	wx.globalData.lastTime = Date.now();
 	wx.globalData.mainHex = new Hex(settings.hexWidth);
 	wx.globalData.blocks = []
 	wx.globalData.waveone = new blockGen(wx.globalData.mainHex);
-	wx.globalData.gdx =  0;
+	wx.globalData.gdx = 0;
 	wx.globalData.gdy = 0;
-	wx.globalData.comboTime =  0;
+	wx.globalData.comboTime = 0;
 
 	wx.globalData.mainHex.y = -100;
 
@@ -180,90 +182,93 @@ function gameinit() {
 }
 
 export function animLoop() {
+	//console.log('animLoop')
 	switch (wx.globalData.gameState) {
-	case 1:
-		//requestAnimationFrame(animLoop);
-		render(ctx,canvas);
-		var now = Date.now();
-		var dt = (now - wx.globalData.lastTime)/16.666 * wx.globalData.rush;
-		if(!wx.globalData.mainHex.delay) {
-			update(dt);
-		}
-		else{
-			wx.globalData.mainHex.delay--;
-		}
-		wx.globalData.lastTime = now;
+		case 1:
+			//requestAnimationFrame(animLoop);
+			render(ctx, canvas);
+			var now = Date.now();
+			var dt = (now - wx.globalData.lastTime) / 16.666 * wx.globalData.rush;
+			if (!wx.globalData.mainHex.delay) {
+				update(dt);
+			}
+			else {
+				wx.globalData.mainHex.delay--;
+			}
+			wx.globalData.lastTime = now;
 
-		checkGameOver()
-		break;
+			checkGameOver()
+			break;
 
-	case 0:
-		//requestAnimationFrame(animLoop);
-		
-		//render();
-		drawStartScreen(ctx,canvas);
-		//drawGameOver(ctx,canvas);
-		break;
+		case 0:
+			//requestAnimationFrame(animLoop);
 
-	case -1:
-		//requestAnimationFrame(animLoop);
-		render(ctx,canvas);
-		break;
+			//render();
+			drawStartScreen(ctx, canvas);
+			//drawGameOver(ctx,canvas);
+			break;
 
-	case 2:
-		//requestAnimationFrame(animLoop);
-		render(ctx,canvas);
-		drawGameOver(ctx,canvas);
-		break;
-	case 3: //泡泡
-		//requestAnimationFrame(animLoop);
-		animate();
-		//console.log("game over");
-		//render(ctx,canvas);
-		break;
-	case 4: //俄罗斯方块
-		//requestAnimationFrame(animLoop);
-		animateTreis();
-		break;
-	case 5: //小蜜蜂
-		animateBee();
-		break;
-	case 6: //飞机
-		animatePlane();
-		break;
-	case 7: //无人区
-		animateLoad();
-		break;
-	case 8: //探险
-		animateExplore();
-		break;
-	case 999: //返回主界面
-		//requestAnimationFrame(animLoop);
-		wx.globalData.gameState = 0;
-		audioManager.stopBGM();
-		gameinit();
-		break;
-	default:
-		console.log("default");
-		break;
+		case -1:
+			//requestAnimationFrame(animLoop);
+			render(ctx, canvas);
+			break;
+
+		case 2:
+			//requestAnimationFrame(animLoop);
+			render(ctx, canvas);
+			drawGameOver(ctx, canvas);
+			break;
+		case 3: //泡泡
+			//requestAnimationFrame(animLoop);
+			animate();
+			//console.log("game over");
+			//render(ctx,canvas);
+			break;
+		case 4: //俄罗斯方块
+			//requestAnimationFrame(animLoop);
+			animateTreis();
+			break;
+		case 5: //小蜜蜂
+			animateBee();
+			break;
+		case 6: //飞机
+			//animatePlane();
+			break;
+		case 7: //无人区
+			animateLoad();
+			break;
+		case 8: //探险
+			animateExplore();
+			break;
+		case 999: //返回主界面
+			//requestAnimationFrame(animLoop);
+			wx.globalData.gameState = 0;
+			audioManager.stopBGM();
+			gameinit();
+			break;
+		default:
+			console.log("default");
+			break;
 	}
-	requestAnimationFrame(animLoop);
+	if (wx.globalData.gameState !== 6) {
+		requestAnimationFrame(animLoop);
+	}
 }
 
 // 检查点击是否在按钮区域内
 function isButtonClicked(touch, button) {
-    return button && 
-        touch.clientX >= button.x && 
-        touch.clientX <= button.x + button.width &&
-        touch.clientY >= button.y && 
-        touch.clientY <= button.y + button.height;
+	return button &&
+		touch.clientX >= button.x &&
+		touch.clientX <= button.x + button.width &&
+		touch.clientY >= button.y &&
+		touch.clientY <= button.y + button.height;
 }
 
 function handleGameStart(e) {
 	// 触摸事件处理
 	const touch = e.touches[0];
 	const x = touch.clientX;
-	switch(wx.globalData.gameState){
+	switch (wx.globalData.gameState) {
 		case 1:
 			if (x < screenWidth / 2) {
 				if (wx.globalData.mainHex && wx.globalData.gameState !== 0) {
@@ -289,9 +294,9 @@ function handleGameStart(e) {
 			) {
 				wx.offTouchStart(handleGameStart);
 				wx.globalData.gameState = 999;
-				
+
 			}
-			
+
 			//wx.globalData.mainHex.texts.push(new Text(canvasWidth/2,canvasHeight/2, "连击 X" + wx.globalData.mainHex.position, "#FF0000"));
 
 			break
@@ -304,84 +309,68 @@ function handleGameStart(e) {
 
 // 修改setStartScreen函数
 function setStartScreen() {
-    // 添加触摸事件监听
-    function handleMainPage(e) {
-        const touch = e.touches[0];
-        const canvas = wx.globalData.canvas;
-        const screenWidth = canvas.width / wx.globalData.currentPixelRatio;
-        const screenHeight = canvas.height / wx.globalData.currentPixelRatio;
-        const centerX = screenWidth / 2;
-        const centerY = screenHeight / 2;
-        
-        // 检查是否点击了开始按钮（六边形）
-        if (wx.globalData.gameState === 0 && 
-            Math.sqrt(Math.pow(touch.clientX - centerX, 2) + Math.pow(touch.clientY - centerY, 2)) < 200 * settings.scale) {
-            
-            wx.offTouchStart(handleMainPage);
-            // 开始游戏
-            wx.globalData.gameState = 1;
-            wx.onTouchStart(handleGameStart);
-            wx.globalData.lastTime = Date.now();
-            console.log("开始游戏");
-            
-            audioManager.start();
-            
-            // 清除开始界面的重绘定时器
-            if (wx.globalData.startScreenInterval) {
-                clearInterval(wx.globalData.startScreenInterval);
-                wx.globalData.startScreenInterval = null;
-            }
-            return;
-        }
-        
-        // 检查是否点击了分享按钮
-        if (isButtonClicked(touch, wx.globalData.mainShareButton)) {
-			if (wx.globalData.gameState !== 0) return;
-            // 分享游戏
-            /*wx.shareAppMessage({
-                title: '快乐六边形 - 考验反应力的休闲小游戏',
-                desc: '快来和我一起玩快乐六边形吧！',
-                imageUrl: 'res/images/share.png',
-                success: function() {
-                    wx.showToast({
-                        title: '分享成功',
-                        icon: 'success',
-                        duration: 2000
-                    });
-                },
-                fail: function() {
-                    wx.showToast({
-                        title: '分享失败',
-                        icon: 'none',
-                        duration: 2000
-                    });
-                }
-            });*/
+	// 添加触摸事件监听
+	function handleMainPage(e) {
+		const touch = e.touches[0];
+		const canvas = wx.globalData.canvas;
+		const screenWidth = canvas.width / wx.globalData.currentPixelRatio;
+		const screenHeight = canvas.height / wx.globalData.currentPixelRatio;
+		const centerX = screenWidth / 2;
+		const centerY = screenHeight / 2;
 
-			wx.showModal({
-				title: '提示',
-				content: '链接需在浏览器打开，是否复制？',
-				success(res) {
-				  if (res.confirm) {
-					wx.setClipboardData({ data: "https://game.weixin.qq.com/cgi-bin/h5/lite/circlecenter/index.html?wechat_pkgid=lite_circlecenter&liteapp=liteapp%3A%2F%2Fwxalited17d79803d8c228a7eac78129f40484c%3Fpath%3Dpages%252Findex%252Findex&appid=wx79ef1796813d6ab0#wechat_redirect" });
-				  }
-				}
-			  });
-			
-            return;
-        }
-        
-        // 检查是否点击了泡泡按钮
-        if (isButtonClicked(touch, wx.globalData.bubbleButton)) {
-            touchPop(e);
-            return;
-        }
-        
-        // 检查是否点击了方块按钮
-        if (isButtonClicked(touch, wx.globalData.terisButton)) {
-            touchTeris(e);
-            return;
-        }
+		// 检查是否点击了开始按钮（六边形）
+		if (wx.globalData.gameState === 0 &&
+			Math.sqrt(Math.pow(touch.clientX - centerX, 2) + Math.pow(touch.clientY - centerY, 2)) < 200 * settings.scale) {
+
+			wx.offTouchStart(handleMainPage);
+			// 开始游戏
+			wx.globalData.gameState = 1;
+			wx.onTouchStart(handleGameStart);
+			wx.globalData.lastTime = Date.now();
+			console.log("开始游戏");
+
+			audioManager.start();
+
+			// 清除开始界面的重绘定时器
+			if (wx.globalData.startScreenInterval) {
+				clearInterval(wx.globalData.startScreenInterval);
+				wx.globalData.startScreenInterval = null;
+			}
+			return;
+		}
+
+		// 检查是否点击了分享按钮
+		if (isButtonClicked(touch, wx.globalData.mainShareButton)) {
+			if (wx.globalData.gameState !== 0) return;
+			const pageManager = wx.createPageManager();
+
+			pageManager.load({
+				openlink: '-SSEykJvFV3pORt5kTNpS0g9v-S9KI824nQjR7uPSuDZWntNQ64ZfIpCj-M2bBfXJW7O35YSywieJtmCpg9v5654E4hUSX0MsRnpCPrZmyUaQuf6PDhwYqw12GURpL0ixhURyEQnunJh5sGUT7grysveyQmAbYZU2OrV23n1G1DSSAFMKULr05Lpl_fXWcYRLlq16buOhfFpPYZXOmxbRtUh1PGdvFiZ5d1SIFOB3KJDenJemtToMGtnCxKTF22C6nQ_JGnvkbS1BtCCd-aDw6oYw_fMkm_9r8PGOJixfPTC5BQ1FOSZXLqs-TJSGppCbwJ5bwTlLv7cneHD16IQ7w', // 由不同渠道获得的OPENLINK值
+			}).then((res) => {
+				// 加载成功，res 可能携带不同活动、功能返回的特殊回包信息（具体请参阅渠道说明）
+				console.log(res);
+
+				// 加载成功后按需显示
+				pageManager.show();
+
+			}).catch((err) => {
+				// 加载失败，请查阅 err 给出的错误信息
+				console.error(err);
+			})
+			return;
+		}
+
+		// 检查是否点击了泡泡按钮
+		if (isButtonClicked(touch, wx.globalData.bubbleButton)) {
+			touchPop(e);
+			return;
+		}
+
+		// 检查是否点击了方块按钮
+		if (isButtonClicked(touch, wx.globalData.terisButton)) {
+			touchTeris(e);
+			return;
+		}
 		//console.log('touchBee',wx.globalData.beeButton)
 		// 检查是否点击了小蜜蜂按钮
 		if (isButtonClicked(touch, wx.globalData.beeButton)) {
@@ -398,7 +387,7 @@ function setStartScreen() {
 			if (wx.globalData.gameState !== 0) return;
 			audioManager.stopBGM();
 			console.log('touchBee')
-			InitLoad(canvas,ctx)
+			InitLoad(canvas, ctx)
 			wx.globalData.gameState = 7
 			wx.offTouchStart(handleMainPage);
 			//InitLoad(canvas, ctx);
@@ -407,118 +396,118 @@ function setStartScreen() {
 		// 检查是否点击了探险按钮
 		if (isButtonClicked(touch, wx.globalData.exploreButton)) {
 			console.log('touchExplore')
-			InitExplore(canvas,ctx)
+			InitExplore(canvas, ctx)
 			wx.globalData.gameState = 8
 			wx.offTouchStart(handleMainPage);
 			return;
 		}
-    }
-    
-    // 注册触摸事件
-    wx.onTouchStart(handleMainPage);
+	}
+
+	// 注册触摸事件
+	wx.onTouchStart(handleMainPage);
 }
 
 // 添加Feed异化卡相关的全局配置
 wx.globalData.feedCard = {
-    isSupported: false,
-    cardHeight: 0,
-    score: 0,
-    bestScore: 0
+	isSupported: false,
+	cardHeight: 0,
+	score: 0,
+	bestScore: 0
 };
 
 // 初始化Feed异化卡能力
 function initFeedCard() {
-    // 检查环境是否支持Feed异化卡
-    if (wx.getFeedCardSupport) {
-        wx.getFeedCardSupport({
-            success(res) {
-                console.log('Feed异化卡支持状态:', res);
-                wx.globalData.feedCard.isSupported = res.feedCardSupport;
-                if (res.feedCardSupport) {
-                    // 获取异化卡可用高度
-                    wx.getFeedCardFreeHeight({
-                        success(res) {
-                            wx.globalData.feedCard.cardHeight = res.freeHeight;
-                            console.log('Feed异化卡可用高度:', res.freeHeight);
-                        },
-                        fail(err) {
-                            console.error('获取异化卡高度失败:', err);
-                        }
-                    });
-                }
-            },
-            fail(err) {
-                console.error('检查Feed异化卡支持失败:', err);
-            }
-        });
-    }else{
+	// 检查环境是否支持Feed异化卡
+	if (wx.getFeedCardSupport) {
+		wx.getFeedCardSupport({
+			success(res) {
+				console.log('Feed异化卡支持状态:', res);
+				wx.globalData.feedCard.isSupported = res.feedCardSupport;
+				if (res.feedCardSupport) {
+					// 获取异化卡可用高度
+					wx.getFeedCardFreeHeight({
+						success(res) {
+							wx.globalData.feedCard.cardHeight = res.freeHeight;
+							console.log('Feed异化卡可用高度:', res.freeHeight);
+						},
+						fail(err) {
+							console.error('获取异化卡高度失败:', err);
+						}
+					});
+				}
+			},
+			fail(err) {
+				console.error('检查Feed异化卡支持失败:', err);
+			}
+		});
+	} else {
 		console.log("Feed异化卡不支持");
 	}
 }
 
 // 更新Feed异化卡内容
 function updateFeedCard(score) {
-    if (!wx.globalData.feedCard.isSupported) return;
+	if (!wx.globalData.feedCard.isSupported) return;
 
-    // 更新最高分
-    if (score > wx.globalData.feedCard.bestScore) {
-        wx.globalData.feedCard.bestScore = score;
-    }
+	// 更新最高分
+	if (score > wx.globalData.feedCard.bestScore) {
+		wx.globalData.feedCard.bestScore = score;
+	}
 
-    // 准备Feed卡片数据
-    const cardData = {
-        feedCardId: 1, // 卡片ID，需要在开发者平台配置
-        cardArgs: {
-            score: score.toString(),
-            bestScore: wx.globalData.feedCard.bestScore.toString(),
-            title: '快乐六边形',
-            desc: `我在快乐六边形中获得了${score}分！`,
-            imageUrl: 'feed-card-image.png' // 替换为你的图片地址
-        }
-    };
+	// 准备Feed卡片数据
+	const cardData = {
+		feedCardId: 1, // 卡片ID，需要在开发者平台配置
+		cardArgs: {
+			score: score.toString(),
+			bestScore: wx.globalData.feedCard.bestScore.toString(),
+			title: '快乐六边形',
+			desc: `我在快乐六边形中获得了${score}分！`,
+			imageUrl: 'feed-card-image.png' // 替换为你的图片地址
+		}
+	};
 
-    // 展示Feed异化卡
-    wx.showFeedCard({
-        feedCardData: cardData,
-        success(res) {
-            console.log('展示Feed异化卡成功:', res);
-        },
-        fail(err) {
-            console.error('展示Feed异化卡失败:', err);
-        }
-    });
+	// 展示Feed异化卡
+	wx.showFeedCard({
+		feedCardData: cardData,
+		success(res) {
+			console.log('展示Feed异化卡成功:', res);
+		},
+		fail(err) {
+			console.error('展示Feed异化卡失败:', err);
+		}
+	});
 }
 
 // 添加分享卡片功能
 function shareFeedCard() {
-    if (!wx.globalData.feedCard.isSupported) return;
+	if (!wx.globalData.feedCard.isSupported) return;
 
-    wx.shareFeedCard({
-        feedCardId: 1, // 与showFeedCard中使用的ID保持一致
-        cardArgs: {
-            score: wx.globalData.score.toString(),
-            bestScore: wx.globalData.feedCard.bestScore.toString(),
-            title: '快乐六边形',
-            desc: `我在快乐六边形中获得了${wx.globalData.score}分！快来挑战我吧！`,
-            imageUrl: 'feed-card-image.png'
-        },
-        success(res) {
-            console.log('分享Feed卡片成功:', res);
-            wx.showToast({
-                title: '分享成功',
-                icon: 'success',
-                duration: 2000
-            });
-        },
-        fail(err) {
-            console.error('分享Feed卡片失败:', err);
-            wx.showToast({
-                title: '分享失败',
-                icon: 'none',
-                duration: 2000
-            });
-        }
-    });
+	wx.shareFeedCard({
+		feedCardId: 1, // 与showFeedCard中使用的ID保持一致
+		cardArgs: {
+			score: wx.globalData.score.toString(),
+			bestScore: wx.globalData.feedCard.bestScore.toString(),
+			title: '快乐六边形',
+			desc: `我在快乐六边形中获得了${wx.globalData.score}分！快来挑战我吧！`,
+			imageUrl: 'feed-card-image.png'
+		},
+		success(res) {
+			console.log('分享Feed卡片成功:', res);
+			wx.showToast({
+				title: '分享成功',
+				icon: 'success',
+				duration: 2000
+			});
+		},
+		fail(err) {
+			console.error('分享Feed卡片失败:', err);
+			wx.showToast({
+				title: '分享失败',
+				icon: 'none',
+				duration: 2000
+			});
+		}
+	});
 }
 
 
@@ -526,14 +515,14 @@ function shareFeedCard() {
 function update(dt) {
 	// 更新主六边形的时间增量
 	wx.globalData.mainHex.dt = dt;
-	
+
 	// 更新波生成器
 	wx.globalData.waveone.update();
 	// 检查是否需要更新得分时间
 	if (wx.globalData.mainHex.ct - wx.globalData.waveone.prevTimeScored > 1000) {
 		wx.globalData.waveone.prevTimeScored = wx.globalData.mainHex.ct;
 	}
-	
+
 	// 用于跟踪最低的被删除方块的索引
 	var lowestDeletedIndex = 99;
 	var i;
@@ -546,7 +535,7 @@ function update(dt) {
 		wx.globalData.mainHex.doesBlockCollide(wx.globalData.blocks[i]);
 		if (!wx.globalData.blocks[i].settled) {
 			// 如果方块未固定，且不在初始化状态，则更新其位置
-			if (!wx.globalData.blocks[i].initializing) 
+			if (!wx.globalData.blocks[i].initializing)
 				wx.globalData.blocks[i].distFromHex -= wx.globalData.blocks[i].iter * dt * settings.scale;
 		} else if (!wx.globalData.blocks[i].removed) {
 			// 如果方块已固定但未被移除，标记为已移除
@@ -602,7 +591,7 @@ function update(dt) {
 	}
 
 	// 清理已移除的方块
-	for(i = 0; i < wx.globalData.blocks.length; i++){
+	for (i = 0; i < wx.globalData.blocks.length; i++) {
 		if (wx.globalData.blocks[i].removed == 1) {
 			wx.globalData.blocks.splice(i, 1);
 			i--;
@@ -619,80 +608,80 @@ function update(dt) {
 function checkGameOver() {
 	// 检查每条边上的方块数量
 	for (let lane = 0; lane < wx.globalData.mainHex.sides; lane++) {
-			if (wx.globalData.mainHex.blocks[lane].length > settings.gameOverLength) {
+		if (wx.globalData.mainHex.blocks[lane].length > settings.gameOverLength) {
 			console.log("gameOver");
 			// 游戏结束
 			gameOver();
 			break;
 		}
 	}
-	
+
 	// 移除错误的分数检查，确保游戏不会在特定分数时结束
 	// 游戏应该只在堆叠超过5个方块时结束
 }
 
 // 分享功能
 function shareGame(score, isHighScore = false) {
-    const shareTitle = isHighScore ? `我在快乐六边形中创造了新纪录：${score}分！` : `我在快乐六边形中获得了${score}分！`;
-    const shareContent = `快来挑战我的分数吧！`;
-    
-    wx.shareAppMessage({
-        title: shareTitle,
-        desc: shareContent,
-        imageUrl: 'res/images/share.png', // 确保这个图片存在
-        success: function() {
-            wx.showToast({
-                title: '分享成功',
-                icon: 'success',
-                duration: 2000
-            });
-        },
-        fail: function() {
-            wx.showToast({
-                title: '分享失败',
-                icon: 'none',
-                duration: 2000
-            });
-        }
-    });
+	const shareTitle = isHighScore ? `我在快乐六边形中创造了新纪录：${score}分！` : `我在快乐六边形中获得了${score}分！`;
+	const shareContent = `快来挑战我的分数吧！`;
+
+	wx.shareAppMessage({
+		title: shareTitle,
+		desc: shareContent,
+		imageUrl: 'res/images/share.png', // 确保这个图片存在
+		success: function () {
+			wx.showToast({
+				title: '分享成功',
+				icon: 'success',
+				duration: 2000
+			});
+		},
+		fail: function () {
+			wx.showToast({
+				title: '分享失败',
+				icon: 'none',
+				duration: 2000
+			});
+		}
+	});
 }
 
 // 处理游戏结束时的触摸事件
 function handleGameOverTouch(e) {
-    const touch = e.touches[0];
-    const shareButton = wx.globalData.shareButton;
-    
-    if (shareButton && 
-        touch.clientX >= shareButton.x && 
-        touch.clientX <= shareButton.x + shareButton.width &&
-        touch.clientY >= shareButton.y && 
-        touch.clientY <= shareButton.y + shareButton.height) {
-        // 点击了分享按钮
-        const isHighScore = wx.globalData.score === wx.globalData.highScore;
-        shareGame(wx.globalData.score, isHighScore);
-    } else {
-        // 点击了其他区域，重新开始游戏
-        wx.globalData.gameState = 0;
-        wx.offTouchStart(handleGameOverTouch);
-        setStartScreen();
-    }
+	const touch = e.touches[0];
+	const shareButton = wx.globalData.shareButton;
+
+	if (shareButton &&
+		touch.clientX >= shareButton.x &&
+		touch.clientX <= shareButton.x + shareButton.width &&
+		touch.clientY >= shareButton.y &&
+		touch.clientY <= shareButton.y + shareButton.height) {
+		// 点击了分享按钮
+		const isHighScore = wx.globalData.score === wx.globalData.highScore;
+		shareGame(wx.globalData.score, isHighScore);
+	} else {
+		// 点击了其他区域，重新开始游戏
+		wx.globalData.gameState = 0;
+		wx.offTouchStart(handleGameOverTouch);
+		setStartScreen();
+	}
 }
 
 // 修改游戏结束处理
 function gameOver() {
-    // 设置游戏状态为结束
-    wx.globalData.gameState = 2;
-    // 播放游戏结束音效
-    audioManager.gameover();
-    
-    // 更新最高分
-    if (wx.globalData.score > wx.globalData.highScore) {
-        wx.globalData.highScore = wx.globalData.score;
-        saveHighScore(wx.globalData.score);
-    }
-    
-    // 注册游戏结束界面的触摸事件
-    wx.onTouchStart(handleGameOverTouch);
+	// 设置游戏状态为结束
+	wx.globalData.gameState = 2;
+	// 播放游戏结束音效
+	audioManager.gameover();
+
+	// 更新最高分
+	if (wx.globalData.score > wx.globalData.highScore) {
+		wx.globalData.highScore = wx.globalData.score;
+		saveHighScore(wx.globalData.score);
+	}
+
+	// 注册游戏结束界面的触摸事件
+	wx.onTouchStart(handleGameOverTouch);
 }
 
 //碰撞检测
@@ -700,70 +689,70 @@ function gameOver() {
  * @param {Hex} hex - 第一个参数是数字类型
  */
 function consolidateBlocks(hex, side, index) {
-    // 记录哪些边被改变
-    var sidesChanged = [];
-    var deleting = [];
+	// 记录哪些边被改变
+	var sidesChanged = [];
+	var deleting = [];
 	/**
 	 * @type {Array<Block>}
 	 */
-    var deletedBlocks = [];
-    // 添加初始情况
-    deleting.push([side, index]);
-    // 填充删除数组
-    floodFill(hex, side, index, deleting);
-    // 确保有超过3个块需要删除
-    if (deleting.length < 3) {
-        return;
-    }
-    var i;
-    for (i = 0; i < deleting.length; i++) {
-        var arr = deleting[i];
-        // 确保数组是正确的
-        if (arr !== undefined && arr.length == 2) {
-            // 如果不在已改变的边数组中，则添加
-            if (sidesChanged.indexOf(arr[0]) == -1) {
-                sidesChanged.push(arr[0]);
-            }
-            // 标记为已删除
-            hex.blocks[arr[0]][arr[1]].deleted = 1;
-            deletedBlocks.push(hex.blocks[arr[0]][arr[1]]);
-        }
-    }
+	var deletedBlocks = [];
+	// 添加初始情况
+	deleting.push([side, index]);
+	// 填充删除数组
+	floodFill(hex, side, index, deleting);
+	// 确保有超过3个块需要删除
+	if (deleting.length < 3) {
+		return;
+	}
+	var i;
+	for (i = 0; i < deleting.length; i++) {
+		var arr = deleting[i];
+		// 确保数组是正确的
+		if (arr !== undefined && arr.length == 2) {
+			// 如果不在已改变的边数组中，则添加
+			if (sidesChanged.indexOf(arr[0]) == -1) {
+				sidesChanged.push(arr[0]);
+			}
+			// 标记为已删除
+			hex.blocks[arr[0]][arr[1]].deleted = 1;
+			deletedBlocks.push(hex.blocks[arr[0]][arr[1]]);
+		}
+	}
 
-    // 添加分数
-    var now = wx.globalData.mainHex.ct;
-    if (now - hex.lastCombo < settings.comboTime) {
-        //settings.comboTime = (1 / settings.creationSpeedModifier) * (wx.globalData.waveone.nextGen / 16.666667) * 3;
-        hex.comboMultiplier += 1;
-		settings.comboTime = settings.basecomboTime*(1-hex.comboMultiplier/10);
-        var coords = findCenterOfBlocks(deletedBlocks);
-        hex.texts.push(new Text(coords['x'], coords['y'], "连击 x" + hex.comboMultiplier.toString(), "#FF0000"));
-		if(hex.comboMultiplier < 3){
+	// 添加分数
+	var now = wx.globalData.mainHex.ct;
+	if (now - hex.lastCombo < settings.comboTime) {
+		//settings.comboTime = (1 / settings.creationSpeedModifier) * (wx.globalData.waveone.nextGen / 16.666667) * 3;
+		hex.comboMultiplier += 1;
+		settings.comboTime = settings.basecomboTime * (1 - hex.comboMultiplier / 10);
+		var coords = findCenterOfBlocks(deletedBlocks);
+		hex.texts.push(new Text(coords['x'], coords['y'], "连击 x" + hex.comboMultiplier.toString(), "#FF0000"));
+		if (hex.comboMultiplier < 3) {
 			audioManager.good();
 		}
-		else if(hex.comboMultiplier < 6){
+		else if (hex.comboMultiplier < 6) {
 			audioManager.great();
 		}
-		else{
+		else {
 			audioManager.unbleaveable();
 		}
-		
+
 	} else {
-        settings.comboTime = settings.basecomboTime;
-        hex.comboMultiplier = 1;
+		settings.comboTime = settings.basecomboTime;
+		hex.comboMultiplier = 1;
 		audioManager.good();
-    }
+	}
 	hex.lastCombo = now;
-	audioManager.combotime(settings.comboTime/60/wx.globalData.rush);
-    var adder = deleting.length * deleting.length * hex.comboMultiplier;
-    hex.texts.push(new Text(hex.x, hex.y, "得分 + " + adder.toString(), deletedBlocks[0].color));
-    hex.lastColorScored = deletedBlocks[0].color;
-    wx.globalData.score += adder;	
+	audioManager.combotime(settings.comboTime / 60 / wx.globalData.rush);
+	var adder = deleting.length * deleting.length * hex.comboMultiplier;
+	hex.texts.push(new Text(hex.x, hex.y, "得分 + " + adder.toString(), deletedBlocks[0].color));
+	hex.lastColorScored = deletedBlocks[0].color;
+	wx.globalData.score += adder;
 }
-function search(twoD,oneD){
+function search(twoD, oneD) {
 	// Searches a two dimensional array to see if it contains a one dimensional array. indexOf doesn't work in this case
-	for(var i=0;i<twoD.length;i++){
-		if(twoD[i][0] == oneD[0] && twoD[i][1] == oneD[1]) {
+	for (var i = 0; i < twoD.length; i++) {
+		if (twoD[i][0] == oneD[0] && twoD[i][1] == oneD[1]) {
 			return true;
 		}
 	}
@@ -778,34 +767,34 @@ function search(twoD,oneD){
  * @returns 
  */
 function floodFill(hex, side, index, deleting) {
-    // 如果指定的边或索引不存在，直接返回
-    if (hex.blocks[side] === undefined || hex.blocks[side][index] === undefined) return;
+	// 如果指定的边或索引不存在，直接返回
+	if (hex.blocks[side] === undefined || hex.blocks[side][index] === undefined) return;
 
-    // 存储当前块的颜色
-    var color = hex.blocks[side][index].color;
-    // 嵌套的for循环用于遍历相邻的块
-    for (var x = -1; x < 2; x++) {
-        for (var y = -1; y < 2; y++) {
-            // 确保不是对角线方向
-            if (Math.abs(x) == Math.abs(y)) { continue; }
-            // 计算当前探索的边，使用模运算
-            var curSide = (side + x + hex.sides) % hex.sides;
-            // 计算当前索引
-            var curIndex = index + y;
-            // 确保当前边和索引存在
-            if (hex.blocks[curSide] === undefined) { continue; }
-            if (hex.blocks[curSide][curIndex] !== undefined) {
-                // 检查颜色是否相同，是否已经被探索过，以及是否未被删除
-                if (hex.blocks[curSide][curIndex].color == color && search(deleting, [curSide, curIndex]) === false && hex.blocks[curSide][curIndex].deleted === 0) {
-                    // 将当前块添加到已探索数组中
-                    deleting.push([curSide, curIndex]);
-                    // 递归调用，探索下一个块
-                    floodFill(hex, curSide, curIndex, deleting);
-                }
-            }
-        }
-    }
+	// 存储当前块的颜色
+	var color = hex.blocks[side][index].color;
+	// 嵌套的for循环用于遍历相邻的块
+	for (var x = -1; x < 2; x++) {
+		for (var y = -1; y < 2; y++) {
+			// 确保不是对角线方向
+			if (Math.abs(x) == Math.abs(y)) { continue; }
+			// 计算当前探索的边，使用模运算
+			var curSide = (side + x + hex.sides) % hex.sides;
+			// 计算当前索引
+			var curIndex = index + y;
+			// 确保当前边和索引存在
+			if (hex.blocks[curSide] === undefined) { continue; }
+			if (hex.blocks[curSide][curIndex] !== undefined) {
+				// 检查颜色是否相同，是否已经被探索过，以及是否未被删除
+				if (hex.blocks[curSide][curIndex].color == color && search(deleting, [curSide, curIndex]) === false && hex.blocks[curSide][curIndex].deleted === 0) {
+					// 将当前块添加到已探索数组中
+					deleting.push([curSide, curIndex]);
+					// 递归调用，探索下一个块
+					floodFill(hex, curSide, curIndex, deleting);
+				}
+			}
+		}
+	}
 }
 
-export {gameinit}
+export { gameinit }
 

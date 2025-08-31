@@ -1,13 +1,13 @@
-import { drawRoundRect } from '../comon.js';	
+import { drawRoundRect } from '../comon.js';
 import { settings } from '../settings.js';
 import GameCarousel from './components/game-carousel';
 import { audioManager } from '../entry/music.js';
-import {Init as InitPopo } from './bubales.js'
-import{ InitTeris } from './teris.js'
-import{ InitBee } from './bee.js'
-import{ InitPlane } from './plane.js'
+import { Init as InitPopo } from './bubales.js'
+import { InitTeris } from './teris.js'
+import { InitBee } from './bee.js'
+
 const tt = wx
-let bubbleX, bubbleY,btnWidth,btnHeight;
+let bubbleX, bubbleY, btnWidth, btnHeight;
 let terisX, terisY;
 let canvas, ctx;
 let step = 80
@@ -16,61 +16,105 @@ let gameCarousel;
 export function touchPop(e) {
 	if (wx.globalData.gameState !== 0) return;
 
-	InitPopo(canvas,ctx)
+	InitPopo(canvas, ctx)
 	wx.globalData.gameState = 3
 	wx.offTouchStart(touchPop);
 	audioManager.stopBGM();
-	
+
 }
 
 export function touchTeris(e) {
 	if (wx.globalData.gameState !== 0) return;
-	
-	InitTeris(canvas,ctx)
+
+	InitTeris(canvas, ctx)
 	wx.globalData.gameState = 4
 	wx.offTouchStart(touchTeris);
 	audioManager.stopBGM();
-	
+
 }
 
 export function touchBee(e) {
 	if (wx.globalData.gameState !== 0) return;
 	//console.log('touchBee')
-	InitBee(canvas,ctx)
+	InitBee(canvas, ctx)
 	wx.globalData.gameState = 5
 	wx.offTouchStart(touchBee);
 	audioManager.stopBGM();
-	
+
 }
 
 export function touchPlane(e) {
 	if (wx.globalData.gameState !== 0) return;
 	audioManager.stopBGM();
-	//console.log('touchBee')
-	InitPlane(canvas,ctx)
+
 	wx.globalData.gameState = 6
+	// 3. 清理定时器
+	if (wx.globalData.startScreenInterval) {
+		clearInterval(wx.globalData.startScreenInterval);
+		wx.globalData.startScreenInterval = null;
+		console.log('清理定时器完成');
+	}
+
+	// 3. 重置Canvas和上下文变量
+	canvas = null;
+	ctx = null;
+	// 6. 清理全局引用
+	if (wx.globalData.ctx) {
+		wx.globalData.ctx = null;
+	}
+	const loadTask = wx.loadSubpackage({
+		name: 'XingTu', // 在 game.json 中配置的分包 name
+		success: function (res) {
+			// 分包加载成功后执行的回调函数
+			console.log('分包加载成功');
+			// 这里可以执行分包中的逻辑，如跳转场景等
+			const packageAModule = require('../XingTu/game.js');
+			packageAModule.xingtuinit();
+		},
+		fail: function (res) {
+			// 分包加载失败后执行的回调函数
+			console.error('分包加载失败', res);
+		}
+	});
+
+	// 监听下载进度事件
+	loadTask.onProgressUpdate(res => {
+		console.log('下载进度', res.progress);
+		console.log('已下载数据长度', res.totalBytesWritten);
+		console.log('预期总数据长度', res.totalBytesExpectedToWrite);
+	});
+
+	// 4. 等待一帧，确保Canvas状态完全重置
+	//setTimeout(() => {
+	//	import { xingtuinit } from '../XingTu/game.js'
+	// 5. 初始化Laya引擎
+
+	//wx.offTouchStart(touchPlane);
+	//	console.log('xingtuinit调用完成');
+	//}, 16); // 约一帧的时间
+
 	wx.offTouchStart(touchPlane);
 
-	
+
 }
 
 // 绘制按钮的通用函数
 function drawButton(ctx, x, y, width, height, text, color = '#FF6B6B', hoverColor = '#ee5253') {
 	ctx.save();
-	
+
 	// 绘制按钮背景
-	drawRoundRect(ctx, x - width/2, y - height/2, width, height, 10 * settings.scale);
-	
+	drawRoundRect(ctx, x - width / 2, y - height / 2, width, height, 10 * settings.scale);
+
 	// 创建按钮渐变
 	const gradient = ctx.createLinearGradient(
-		x - width/2,
-		y - height/2,
-		x + width/2,
-		y + height/2
+		x - width / 2,
+		y - height / 2,
+		x + width / 2,
+		y + height / 2
 	);
 	gradient.addColorStop(0, color);
 	gradient.addColorStop(1, hoverColor);
-	
+
 	ctx.fillStyle = gradient;
 	ctx.fill();
 
@@ -82,11 +126,11 @@ function drawButton(ctx, x, y, width, height, text, color = '#FF6B6B', hoverColo
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
 	ctx.fillText(text, x, y);
-	
+
 	ctx.restore();
 }
 
-export function drawStartScreen(c,ca) {
+export function drawStartScreen(c, ca) {
 	canvas = ca;
 	ctx = c;
 	const screenWidth = canvas.width / wx.globalData.currentPixelRatio;
@@ -104,11 +148,11 @@ export function drawStartScreen(c,ca) {
 	// 绘制半透明背景
 	ctx.fillStyle = innerGradient//'rgba(0, 0, 0, 0.5)';
 	ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-	
+
 	// 绘制开始按钮（六边形版本）
 	const centerX = canvasWidth / 2;
 	const centerY = canvasHeight / 2;
-	
+
 	// 更新按钮动画状态
 	if (!wx.globalData.btnAnimation) {
 		wx.globalData.btnAnimation = {
@@ -204,11 +248,11 @@ export function drawStartScreen(c,ca) {
 	// 绘制连接线动画
 	for (let i = 0; i < 6; i++) {
 		const time = wx.globalData.btnAnimation.time + i * Math.PI / 3;
-		
+
 		ctx.beginPath();
 		ctx.moveTo(innerHexPoints[i].x, innerHexPoints[i].y);
 		ctx.lineTo(outerHexPoints[i].x, outerHexPoints[i].y);
-		
+
 		ctx.strokeStyle = `rgba(252, 252, 0, ${0.6 + 0.2 * Math.sin(time)})`;
 		ctx.lineWidth = 1 * settings.scale;
 		ctx.stroke();
@@ -226,8 +270,8 @@ export function drawStartScreen(c,ca) {
 
 	// 存储开始按钮位置信息
 	wx.globalData.startButton = {
-		x: centerX - btnWidth/2,
-		y: centerY - btnHeight/2,
+		x: centerX - btnWidth / 2,
+		y: centerY - btnHeight / 2,
 		width: btnWidth,
 		height: btnHeight
 	};
@@ -239,11 +283,11 @@ export function drawStartScreen(c,ca) {
 			const logoWidth = 450 * settings.scale;
 			const logoHeight = (logoWidth * wx.globalData.gameLogo.height) / wx.globalData.gameLogo.width;
 			const titleY = screenHeight * 0.25; // 调整标题位置更靠上
-			
+
 			ctx.drawImage(
 				wx.globalData.gameLogo,
-				centerX - logoWidth/2,
-				titleY - logoHeight/2,
+				centerX - logoWidth / 2,
+				titleY - logoHeight / 2,
 				logoWidth,
 				logoHeight
 			);
@@ -266,10 +310,10 @@ export function drawStartScreen(c,ca) {
 	drawHighScore();
 
 	// 初始化游戏轮播图
-	if (!gameCarousel) {	
+	if (!gameCarousel) {
 		gameCarousel = new GameCarousel(canvas);
 		gameCarousel.update();
-	}else{
+	} else {
 		gameCarousel.update();
 	}
 
@@ -281,11 +325,11 @@ export function drawStartScreen(c,ca) {
 	ctx.fillStyle = '#FFFFFF'; // 使用灰色让文字不那么显眼
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'bottom';
-	
+
 	// 分两行显示文字
 	const line1 = '抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。';
 	const line2 = '适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。';
-	
+
 	ctx.fillText(line1, centerX, bottomY - 15 * settings.scale);
 	ctx.fillText(line2, centerX, bottomY);
 	ctx.restore();
@@ -294,22 +338,22 @@ export function drawStartScreen(c,ca) {
 // 设置分享功能
 wx.onShareAppMessage(() => {
 	return {
-	  title: '飞机大战 - 考验反应力的休闲小游戏',
-	  desc: '快来和我一起玩飞机大战吧！',
-	  imageUrl: 'res/images/share.png', // 分享图片
-	  success: function() {
-		wx.showToast({
-		  title: '分享成功',
-		  icon: 'success',
-		  duration: 2000
-		});
-	  },
-	  fail: function() {
-		wx.showToast({
-		  title: '分享失败',
-		  icon: 'none',
-		  duration: 2000
-		});
-	  }
+		title: '飞机大战 - 考验反应力的休闲小游戏',
+		desc: '快来和我一起玩飞机大战吧！',
+		imageUrl: 'res/images/share.png', // 分享图片
+		success: function () {
+			wx.showToast({
+				title: '分享成功',
+				icon: 'success',
+				duration: 2000
+			});
+		},
+		fail: function () {
+			wx.showToast({
+				title: '分享失败',
+				icon: 'none',
+				duration: 2000
+			});
+		}
 	}
-  });
+});

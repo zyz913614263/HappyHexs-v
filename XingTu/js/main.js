@@ -238,7 +238,7 @@ class Main extends Laya.Sprite {
      * 渲染游戏结果
      */
     renderResult(time) {
-        window.coordinate.uploadScore();
+        //window.coordinate.uploadScore();
         window.coordinate.visible = false;
 
         if (window._pk_user_game_id) {
